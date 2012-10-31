@@ -35,6 +35,7 @@ class APT(Bcfg2.Client.Tools.Tool):
         self.debsums = '%s/bin/debsums' % Bcfg2.Options.setup.apt_install_path
         self.aptget = '%s/bin/apt-get' % Bcfg2.Options.setup.apt_install_path
         self.dpkg = '%s/bin/dpkg' % Bcfg2.Options.setup.apt_install_path
+        self.aptmark = '%s/bin/apt-mark' % Bcfg2.Options.setup.apt_install_path
         self.__execs__ = [self.debsums, self.aptget, self.dpkg]
 
         path_entries = os.environ['PATH'].split(':')
@@ -87,6 +88,23 @@ class APT(Bcfg2.Client.Tools.Tool):
             except apt.cache.FetchFailedException:
                 err = sys.exc_info()[1]
                 self.logger.info("Failed to update APT cache: %s" % err)
+            # mark dependencies as being automatically installed and vice versa
+            mark = []
+            unmark = []
+            try:
+                installed_pkgs = [p.name for p in self.pkg_cache if p.is_installed]
+            except AttributeError:
+                installed_pkgs = [p.name for p in self.pkg_cache if p.isInstalled]
+            for pkg in self.getSupportedEntries():
+                if pkg.get('name') in installed_pkgs:
+                    if pkg.get('origin') == 'Packages':
+                        mark.append(pkg.get('name'))
+                    else:
+                        unmark.append(pkg.get('name'))
+            if mark:
+                self.cmd.run("%s markauto %s" % (self.aptmark, (" ".join(mark))))
+            if unmark:
+                self.cmd.run("%s unmarkauto %s" % (self.aptmark, (" ".join(unmark))))
         self.pkg_cache = apt.cache.Cache()
 
     def FindExtra(self):
@@ -241,11 +259,16 @@ class APT(Bcfg2.Client.Tools.Tool):
             self.logger.error("APT command failed")
         self.pkg_cache = apt.cache.Cache()
         self.extra = self.FindExtra()
+        mark = []
         states = dict()
         for package in packages:
             states[package] = self.VerifyPackage(package, [], checksums=False)
             if states[package]:
                 self.modified.append(package)
+                if package.get('origin') == 'Packages':
+                    mark.append(package.get('name'))
+        if mark:
+            self.cmd.run("%s markauto %s" % (self.aptmark, (" ".join(mark))))
         return states
 
     def VerifyPath(self, entry, _):  # pylint: disable=W0613
