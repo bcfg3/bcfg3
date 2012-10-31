@@ -106,6 +106,8 @@ class PackagesSources(Bcfg2.Server.Plugin.StructFile):
                 source = self.source_from_xml(xsource)
                 if source is not None:
                     self.entries.append(source)
+            self.entries.sort(key=(lambda source: source.priority),
+                              reverse=True)
     Index.__doc__ = Bcfg2.Server.Plugin.StructFile.Index.__doc__ + """
 
         ``Index`` is responsible for calling :func:`source_from_xml`

@@ -195,6 +195,9 @@ class Source(Debuggable):  # pylint: disable=R0902
         #: The "name" attribute from :attr:`xsource`
         self.name = None
 
+        #: The "priority" attribute from :attr:`xsource`
+        self.priority = xsource.get('priority', 500)
+
         #: A list of predicates that are used to determine if this
         #: source applies to a given
         #: :class:`Bcfg2.Server.Plugins.Metadata.ClientMetadata`
@@ -257,11 +260,13 @@ class Source(Debuggable):  # pylint: disable=R0902
         for arch in self.arches:
             if self.url:
                 usettings = [dict(version=self.version, component=comp,
-                                  arch=arch, debsrc=self.debsrc)
+                                  arch=arch, debsrc=self.debsrc,
+                                  priority=self.priority)
                              for comp in self.components]
             else:  # rawurl given
                 usettings = [dict(version=self.version, component=None,
-                                  arch=arch, debsrc=self.debsrc)]
+                                  arch=arch, debsrc=self.debsrc,
+                                  priority=self.priority)]
 
             for setting in usettings:
                 if not self.rawurl:

@@ -225,6 +225,16 @@
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>
+    <xsd:attribute type="xsd:integer" name="priority">
+      <xsd:annotation>
+        <xsd:documentation>
+          The priority of the source. This is used to order the
+          sources. After sorting, the first source, that could
+          deliver the package, is used. If not supplied the default
+          priority is 500.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
     <xsd:attributeGroup ref="py:genshiAttrs"/>
   </xsd:complexType>
 
