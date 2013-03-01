@@ -235,6 +235,15 @@
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>
+    <xsd:attribute type="xsd:string" name="pin">
+      <xsd:annotation>
+        <xsd:documentation>
+          Extra information for pinning. This information is used
+          to differ between the sources. Should be used in the
+          supported format of apt.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
     <xsd:attributeGroup ref="py:genshiAttrs"/>
   </xsd:complexType>
 
