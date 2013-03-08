@@ -184,13 +184,15 @@ class APT(Bcfg2.Client.Tools.Tool):
 
         pkg = self.pkg_cache[pkgname]
         installed_version = pkg.installed.version
-        if entry.get('version') == 'auto':
+        if entry.get('version').startswith('auto'):
             if pkg.is_upgradable:
                 desired_version = pkg.candidate.version
             else:
                 desired_version = installed_version
-        elif entry.get('version') == 'any':
+            entry.set('version', "auto: %s" % desired_version)
+        elif entry.get('version').startswith('any'):
             desired_version = installed_version
+            entry.set('version', "any: %s" % desired_version)
         else:
             desired_version = entry.get('version')
         if desired_version != installed_version:
@@ -233,7 +235,7 @@ class APT(Bcfg2.Client.Tools.Tool):
                 self.logger.error("APT has no information about package %s"
                                   % pkgname)
                 continue
-            if pkg.get('version') in ['auto', 'any']:
+            if any([pkg.get('version').startswith(v) for v in ['auto', 'any']]):
                 try:
                     ipkgs.append("%s=%s" % (
                         pkgname,
