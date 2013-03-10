@@ -311,7 +311,7 @@ class Collection(list, Debuggable):
             pin_source = pinnings[package]
 
         for source in self:
-            if pin_source and pin_source != source.name:
+            if pin_source and source.name not in pin_source:
                 continue
             pin_found = True
 
@@ -321,7 +321,7 @@ class Collection(list, Debuggable):
         if not pin_found:
             if pin_source:
                 self.logger.error("Packages: Source '%s' for package '%s' not found" %
-                                  (pin_source, package))
+                                  (' or '.join(pin_source), package))
             else:
                 self.logger.error("Packages: No source found for package '%s'" %
                                   package);

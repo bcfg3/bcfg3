@@ -19,7 +19,12 @@ class PkgVarsFile(Bcfg2.Server.Plugin.StructFile):
             for v in vars:
                 value = d.get(v, None)
                 if value:
-                    results[v][name] = value
+                    if v not in results:
+                        results[v] = {}
+                    if name not in results[v]:
+                        results[v][name] = set()
+
+                    results[v][name].add(value)
 
         return results
 
@@ -35,7 +40,8 @@ class PkgVarsDirectoryBacked(Bcfg2.Server.Plugin.DirectoryBacked):
         for files in self.entries:
             new = self.entries[files].get_additional_data(meta)
             for x in vars:
-                results[x].update(new[x])
+                if x in new:
+                    results[x].update(new[x])
 
         return results
 
