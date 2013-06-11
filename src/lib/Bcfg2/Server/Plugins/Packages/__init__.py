@@ -328,6 +328,10 @@ class Packages(Bcfg2.Server.Plugin.Plugin,
         groups = []
         recommended = dict()
 
+        pinned_src = dict()
+        if hasattr(metadata, 'PkgVars'):
+            pinned_src = metadata.PkgVars['pin']
+
         for struct in structures:
             for pkg in struct.xpath('//Package | //BoundPackage'):
                 if pkg.get("name"):
@@ -369,11 +373,11 @@ class Packages(Bcfg2.Server.Plugin.Plugin,
         base.update(collection.get_essential())
 
         # check for this set of packages in the package cache
-        pkey = hash(tuple(base))
+        pkey = hash((tuple(base), tuple(recommended), tuple(pinned_src)))
         pcache = Bcfg2.Server.Cache.Cache("Packages", "pkg_sets",
                                           collection.cachekey)
         if pkey not in pcache:
-            pcache[pkey] = collection.complete(base, recommended)
+            pcache[pkey] = collection.complete(base, recommended, pinned_src)
         packages, unknown = pcache[pkey]
         if unknown:
             self.logger.info("Packages: Got %d unknown entries" % len(unknown))

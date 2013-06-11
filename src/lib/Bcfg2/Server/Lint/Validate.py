@@ -61,7 +61,8 @@ class Validate(Bcfg2.Server.Lint.ServerlessPlugin):
              "AWSTags/config.xml": "awstags.xsd",
              "NagiosGen/config.xml": "nagiosgen.xsd",
              "FileProbes/config.xml": "fileprobes.xsd",
-             "GroupLogic/groups.xml": "grouplogic.xsd"
+             "GroupLogic/groups.xml": "grouplogic.xsd",
+             "PkgVars/*.xml": "pkgvars.xsd"
              }
 
         self.filelists = {}

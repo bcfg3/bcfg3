@@ -289,7 +289,7 @@ class Collection(list, Debuggable):
         return any(source.is_virtual_package(self.metadata, package)
                    for source in self)
 
-    def get_deps(self, package, recs=None):
+    def get_deps(self, package, recs=None, pinnings=None):
         """ Get a list of the dependencies of the given package.
 
         The base implementation simply aggregates the results of
@@ -297,15 +297,34 @@ class Collection(list, Debuggable):
 
         :param package: The name of the symbol, but see :ref:`pkg-objects`
         :type package: string
+        :param pinnings: Mapping from package names to source names.
+        :type pinnings: dict
         :returns: list of strings, but see :ref:`pkg-objects`
         """
         recommended = None
         if recs and package in recs:
             recommended = recs[package]
 
+        pin_found = False
+        pin_source = None
+        if pinnings and package in pinnings:
+            pin_source = pinnings[package]
+
         for source in self:
+            if pin_source and pin_source != source.name:
+                continue
+            pin_found = True
+
             if source.is_package(self.metadata, package):
                 return source.get_deps(self.metadata, package, recommended)
+
+        if not pin_found:
+            if pin_source:
+                self.logger.error("Packages: Source '%s' for package '%s' not found" %
+                                  (pin_source, package))
+            else:
+                self.logger.error("Packages: No source found for package '%s'" %
+                                  package);
 
         return []
 
@@ -471,12 +490,14 @@ class Collection(list, Debuggable):
 
     @track_statistics()
     def complete(self, packagelist,  # pylint: disable=R0912,R0914
-                 recommended=None):
+                 recommended=None, pinnings=None):
         """ Build a complete list of all packages and their dependencies.
 
         :param packagelist: Set of initial packages computed from the
                             specification.
         :type packagelist: set of strings, but see :ref:`pkg-objects`
+        :param pinnings: Mapping from package names to source names.
+        :type pinnings: dict
         :returns: tuple of sets - The first element contains a set of
                   strings (but see :ref:`pkg-objects`) describing the
                   complete package list, and the second element is a
@@ -535,7 +556,7 @@ class Collection(list, Debuggable):
                 self.debug_log("Packages: handling package requirement %s" %
                                (current,))
                 packages.add(current)
-                deps = self.get_deps(current, recommended)
+                deps = self.get_deps(current, recommended, pinnings)
                 newdeps = set(deps).difference(examined)
                 if newdeps:
                     self.debug_log("Packages: Package %s added requirements %s"
