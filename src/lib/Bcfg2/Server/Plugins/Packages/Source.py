@@ -278,6 +278,8 @@ class Source(Debuggable):  # pylint: disable=R0902
                     setting['baseurl'] = self.rawurl
                 setting['url'] = baseurl % setting
                 setting['name'] = self.get_repo_name(setting)
+                setting['options'] = dict(server=self.server_options,
+                                          client=self.client_options)
             self.url_map.extend(usettings)
 
     def _init_attributes(self, xsource):
