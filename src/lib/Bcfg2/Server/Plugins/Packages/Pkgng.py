@@ -76,9 +76,7 @@ class PkgngSource(Source):
                 self.logger.error("Packages: Failed to read file %s" % fname)
                 raise
             for line in reader.readlines():
-                if not isinstance(line, str):
-                    line = line.decode('utf-8')
-                pkg = json.loads(line)
+                pkg = json.loads(unicode(line, errors='ignore'))
                 pkgname = pkg['name']
                 self.pkgnames.add(pkgname)
                 if 'deps' in pkg:
