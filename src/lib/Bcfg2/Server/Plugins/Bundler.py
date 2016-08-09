@@ -133,7 +133,7 @@ class Bundler(Plugin,
                     if child.get('inherit_modification', 'false') == 'true':
                         if metadata.version_info >= \
                            Bcfg2VersionInfo('1.4.0pre2'):
-                            lxml.etree.SubElement(data, 'Bundle',
+                            lxml.etree.SubElement(data, 'BoundBundle',
                                                   name=child.get('name'))
                         else:
                             self.logger.warning(
