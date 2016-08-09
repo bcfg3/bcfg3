@@ -46,6 +46,7 @@ class APT(Bcfg2.Client.Tools.Tool):
             '-o DPkg::Options::=--force-confold ' + \
             '-o DPkg::Options::=--force-confmiss ' + \
             '--reinstall ' + \
+            '--no-install-recommends ' + \
             '--force-yes '
         if not Bcfg2.Options.setup.debug:
             self.pkgcmd += '-q=2 '
