@@ -17,7 +17,7 @@ def print_entries(interaction, etype):
 
 class _FlagsFilterMixin(object):
     """ Mixin that allows to filter the interactions based on the
-    only_important and/or the dry_run flag """
+    only_important, the dry_run and/or the ready flag """
 
     options = [
         Bcfg2.Options.BooleanOption(
@@ -27,10 +27,15 @@ class _FlagsFilterMixin(object):
         Bcfg2.Options.BooleanOption(
             "-i", "--no-only-important",
             help="Do not consider interactions created with the "
-            "--only-important flag")]
+            "--only-important flag"),
+        Bcfg2.Options.BooleanOption(
+            "-r", "--ready",
+            help="Only consider interactions fully imported into the "
+            "database")]
 
     def get_interaction(self, client, setup):
-        if not setup.no_dry_run and not setup.no_only_important:
+        if not setup.no_dry_run and not setup.no_only_important \
+                and not setup.ready:
             return client.current_interaction
 
         filter = {}
@@ -38,6 +43,8 @@ class _FlagsFilterMixin(object):
             filter['dry_run'] = False
         if setup.no_only_important:
             filter['only_important'] = False
+        if setup.ready:
+            filter['ready'] = True
 
         from Bcfg2.Reporting.models import Interaction
         try:

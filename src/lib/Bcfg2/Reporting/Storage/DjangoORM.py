@@ -401,6 +401,9 @@ class DjangoORM(StorageBase):
                             metric=metric,
                             value=value).save()
 
+        inter.ready = True
+        inter.save()
+
     def import_interaction(self, interaction):
         """Import the data into the backend"""
         try:

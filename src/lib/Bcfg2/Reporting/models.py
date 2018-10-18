@@ -181,6 +181,9 @@ class Interaction(models.Model):
     groups = models.ManyToManyField("Group")
     bundles = models.ManyToManyField("Bundle")
 
+    # Is the import ready?
+    ready = models.BooleanField(default=False)
+
     objects = InteractionManager()
 
     def __str__(self):
