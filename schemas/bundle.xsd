@@ -69,6 +69,13 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
+      <xsd:element name='Conf' type='StructureEntry'>
+        <xsd:annotation>
+          <xsd:documentation>
+            Abstract description of a Conf entry.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
       <xsd:element name='SEBoolean' type='SELinuxStructure'>
         <xsd:annotation>
           <xsd:documentation>
@@ -235,6 +242,13 @@
         <xsd:annotation>
           <xsd:documentation>
             Fully bound description of a POSIXGroup entry.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name='BoundConf' type='ConfType'>
+        <xsd:annotation>
+          <xsd:documentation>
+            Fully bound description of a Conf entry.
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>

@@ -105,6 +105,12 @@
     </xsd:restriction>
   </xsd:simpleType>
 
+  <xsd:simpleType name="ConfTypeEnum">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="debconf"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
   <xsd:complexType name='ActionType'>
     <xsd:annotation>
       <xsd:documentation>
@@ -530,6 +536,38 @@
         <xsd:documentation>
           Group ID number.  If this is not specified, each client is
           allowed to set the GID.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attributeGroup ref="py:genshiAttrs"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="ConfType">
+    <xsd:annotation>
+      <xsd:documentation>
+	The Conf tag allows you to set configurations options client
+        machines (f.e. debconf).
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:attribute type="xsd:token" name="name" use="required">
+      <xsd:annotation>
+        <xsd:documentation>
+          Name of the configuration setting.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute type="xsd:string" name="value">
+      <xsd:annotation>
+        <xsd:documentation>
+	  The value of the configuration setting. If this is not specified,
+          the setting will be reset to it's default value.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="type" type="ConfTypeEnum">
+      <xsd:annotation>
+        <xsd:documentation>
+          Driver to use on the client to manage this configuration.
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>
