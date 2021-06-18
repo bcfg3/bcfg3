@@ -8,7 +8,7 @@ import Bcfg2.Client.Tools
 class Debconf(Bcfg2.Client.Tools.Tool):
     """Debconf Support for Bcfg2."""
     name = 'Debconf'
-    __execs__ = ['/usr/bin/debconf-communicate']
+    __execs__ = ['/usr/bin/debconf-communicate', '/usr/bin/debconf-show']
     __handles__ = [('Conf', 'debconf')]
     __req__ = {'Conf': ['name']}
 
@@ -65,20 +65,13 @@ class Debconf(Bcfg2.Client.Tools.Tool):
 
     def VerifyConf(self, entry, _modlist):
         """ Verify the given Debconf entry. """
-        (seen, value) = self.debconf_get(entry.get('name'))
-        if 'value' not in entry.attrib:
-            if seen == 'true':
-                return False
-        else:
-            if value != entry.get('value'):
-                return False
+        (_, value) = self.debconf_get(entry.get('name'))
+        if value != entry.get('value'):
+            return False
         return True
 
     def InstallConf(self, entry):
         """ Install the given Debconf entry. """
-        if 'value' not in entry.attrib:
-            return self.debconf_reset(entry.get('name'))
-
         return self.debconf_set(entry.get('name'), entry.get('value'))
 
     def Inventory(self, structures=None):
@@ -100,3 +93,21 @@ class Debconf(Bcfg2.Client.Tools.Tool):
 
         return result
     Install.__doc__ = Bcfg2.Client.Tools.Tool.Install.__doc__
+    
+    def FindExtra(self):
+        specified = [entry.get('name')
+                     for entry in self.getSupportedEntries()]
+        extra = set()
+        listowners = self.cmd.run(['/usr/bin/debconf-show', '--listowners'])
+        if listowners.success:
+            owners = listowners.stdout.splitlines()
+
+            values = self.cmd.run(['/usr/bin/debconf-show'] + owners)
+            for line in values.stdout.splitlines():
+                if len(line) > 2 and line[0] == '*':
+                    (name, value) = line[2:].split(':', 2)
+                    if name not in specified:
+                        extra.add(name)
+        return [Bcfg2.Client.XML.Element('Conf', name=name, type='debconf')
+                for name in list(extra)]
+    FindExtra.__doc__ = Bcfg2.Client.Tools.Tool.FindExtra.__doc__

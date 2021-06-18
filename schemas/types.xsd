@@ -559,8 +559,7 @@
     <xsd:attribute type="xsd:string" name="value">
       <xsd:annotation>
         <xsd:documentation>
-	  The value of the configuration setting. If this is not specified,
-          the setting will be reset to it's default value.
+          The value of the configuration setting.
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>
