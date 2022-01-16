@@ -33,6 +33,9 @@ class Debconf(Bcfg2.Client.Tools.Tool):
             self.debconf = None
 
     def _debconf_reply(self, msg):
+        if self.debconf is None:
+            self._start_debconf()
+
         self.logger.debug('Debconf: %s' % msg.strip())
         self.debconf.stdin.write(msg)
         line = self.debconf.stdout.readline().rstrip('\n')
@@ -76,7 +79,6 @@ class Debconf(Bcfg2.Client.Tools.Tool):
 
     def Inventory(self, structures=None):
         try:
-            self._start_debconf()
             result = Bcfg2.Client.Tools.Tool.Inventory(self, structures)
         finally:
             self._stop_debconf()
@@ -86,7 +88,6 @@ class Debconf(Bcfg2.Client.Tools.Tool):
 
     def Install(self, entries):
         try:
-            self._start_debconf()
             result = Bcfg2.Client.Tools.Tool.Install(self, entries)
         finally:
             self._stop_debconf()
