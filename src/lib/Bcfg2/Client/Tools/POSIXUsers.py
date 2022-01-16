@@ -27,13 +27,23 @@ class POSIXUsers(Bcfg2.Client.Tools.Tool):
             type=uid_range_type,
             help="GID ranges the POSIXUsers tool will manage"),
         Bcfg2.Options.Option(
+            cf=('POSIXUsers', 'supgid_whitelist'), default=[],
+            type=uid_range_type,
+            help="GID ranges for supplementary groups the POSIXUsers"
+                 "tool will manage"),
+        Bcfg2.Options.Option(
             cf=('POSIXUsers', 'uid_blacklist'), default=[],
             type=uid_range_type,
             help="UID ranges the POSIXUsers tool will not manage"),
         Bcfg2.Options.Option(
             cf=('POSIXUsers', 'gid_blacklist'), default=[],
             type=uid_range_type,
-            help="GID ranges the POSIXUsers tool will not manage")]
+            help="GID ranges the POSIXUsers tool will not manage"),
+        Bcfg2.Options.Option(
+            cf=('POSIXUsers', 'supgid_blacklist'), default=[],
+            type=uid_range_type,
+            help="GID ranges for supplementary groups the POSIXUsers"
+                 "tool will not manage")]
 
     __execs__ = ['/usr/sbin/useradd', '/usr/sbin/usermod', '/usr/sbin/userdel',
                  '/usr/sbin/groupadd', '/usr/sbin/groupmod',
@@ -58,10 +68,19 @@ class POSIXUsers(Bcfg2.Client.Tools.Tool):
         self.set_defaults = dict(POSIXUser=self.populate_user_entry,
                                  POSIXGroup=lambda g: g)
         self._existing = None
+
+        supgid_whitelist = Bcfg2.Options.setup.supgid_whitelist
+        supgid_blacklist = Bcfg2.Options.setup.supgid_blacklist
+        if supgid_whitelist is None and supgid_blacklist is None:
+            supgid_whitelist = Bcfg2.Options.setup.gid_whitelist
+            supgid_blacklist = Bcfg2.Options.setup.gid_blacklist
+
         self._whitelist = dict(POSIXUser=Bcfg2.Options.setup.uid_whitelist,
-                               POSIXGroup=Bcfg2.Options.setup.gid_whitelist)
+                               POSIXGroup=Bcfg2.Options.setup.gid_whitelist,
+                               POSIXSupGroup=supgid_whitelist)
         self._blacklist = dict(POSIXUser=Bcfg2.Options.setup.uid_blacklist,
-                               POSIXGroup=Bcfg2.Options.setup.gid_blacklist)
+                               POSIXGroup=Bcfg2.Options.setup.gid_blacklist,
+                               POSIXSupGroup=supgid_blacklist)
 
     @property
     def existing(self):
@@ -161,7 +180,7 @@ class POSIXUsers(Bcfg2.Client.Tools.Tool):
         given entry is a member of """
         return [g for g in self.existing['POSIXGroup'].values()
                 if entry.get("name") in g[3] and
-                self._in_managed_range('POSIXGroup', g[2])]
+                self._in_managed_range('POSIXSupGroup', g[2])]
 
     def VerifyPOSIXUser(self, entry, _):
         """ Verify a POSIXUser entry """
