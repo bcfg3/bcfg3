@@ -68,10 +68,9 @@ class Debconf(Bcfg2.Client.Tools.Tool):
 
     def VerifyConf(self, entry, _modlist):
         """ Verify the given Debconf entry. """
-        (_, value) = self.debconf_get(entry.get('name'))
-        if value != entry.get('value'):
-            return False
-        return True
+        (_, current_value) = self.debconf_get(entry.get('name'))
+        entry.set('current_value', current_value)
+        return current_value == entry.get('value')
 
     def InstallConf(self, entry):
         """ Install the given Debconf entry. """
@@ -98,7 +97,7 @@ class Debconf(Bcfg2.Client.Tools.Tool):
     def FindExtra(self):
         specified = [entry.get('name')
                      for entry in self.getSupportedEntries()]
-        extra = set()
+        extra = dict()
         listowners = self.cmd.run(['/usr/bin/debconf-show', '--listowners'])
         if listowners.success:
             owners = listowners.stdout.splitlines()
@@ -106,9 +105,10 @@ class Debconf(Bcfg2.Client.Tools.Tool):
             values = self.cmd.run(['/usr/bin/debconf-show'] + owners)
             for line in values.stdout.splitlines():
                 if len(line) > 2 and line[0] == '*':
-                    (name, value) = line[2:].split(':', 2)
-                    if name not in specified:
-                        extra.add(name)
-        return [Bcfg2.Client.XML.Element('Conf', name=name, type='debconf')
-                for name in list(extra)]
+                    (name, current_value) = line[2:].split(':', 2)
+                    if name not in specified and name not in extra:
+                        extra[name] = Bcfg2.Client.XML.Element(
+                            'Conf', name=name, type='debconf',
+                            current_value=current_value[1:])
+        return extra.values()
     FindExtra.__doc__ = Bcfg2.Client.Tools.Tool.FindExtra.__doc__
