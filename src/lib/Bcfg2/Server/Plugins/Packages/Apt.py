@@ -1,7 +1,6 @@
 """ APT backend for :mod:`Bcfg2.Server.Plugins.Packages` """
 
 import re
-import gzip
 from Bcfg2.Server.Plugins.Packages.Collection import Collection
 from Bcfg2.Server.Plugins.Packages.Source import Source
 
@@ -68,19 +67,24 @@ class AptSource(Source):
     #: AptSource sets the ``type`` on Package entries to "deb"
     ptype = 'deb'
 
+    #: Most (3rd-party) debian repositories still only support "gzip".
+    default_compression = 'gzip'
+
     @property
     def urls(self):
         """ A list of URLs to the base metadata file for each
         repository described by this source. """
+        fname = self.build_filename('Packages')
+
         if not self.rawurl:
             rv = []
             for part in self.components:
                 for arch in self.arches:
-                    rv.append("%sdists/%s/%s/binary-%s/Packages.gz" %
-                              (self.url, self.version, part, arch))
+                    rv.append("%sdists/%s/%s/binary-%s/%s" %
+                              (self.url, self.version, part, arch, fname))
             return rv
         else:
-            return ["%sPackages.gz" % self.rawurl]
+            return ["%s%s" % (self.rawurl, fname)]
 
     def read_files(self):  # pylint: disable=R0912
         bdeps = dict()
@@ -101,11 +105,8 @@ class AptSource(Source):
                 bdeps[barch] = dict()
                 brecs[barch] = dict()
                 bprov[barch] = dict()
-            try:
-                reader = gzip.GzipFile(fname)
-            except IOError:
-                self.logger.error("Packages: Failed to read file %s" % fname)
-                raise
+
+            reader = self.open_file(fname)
             for line in reader.readlines():
                 if not isinstance(line, str):
                     line = line.decode('utf-8')
@@ -150,5 +151,6 @@ class AptSource(Source):
                         if dname not in bprov[barch]:
                             bprov[barch][dname] = set()
                         bprov[barch][dname].add(pkgname)
+            reader.close()
         self.process_files(bdeps, bprov, brecs)
     read_files.__doc__ = Source.read_files.__doc__

@@ -49,6 +49,7 @@ in your ``Source`` subclass.  For an example of this kind of
 import os
 import re
 import sys
+import Bcfg2.Options
 from Bcfg2.Logger import Debuggable
 from Bcfg2.Compat import HTTPError, HTTPBasicAuthHandler, \
     HTTPPasswordMgrWithDefaultRealm, install_opener, build_opener, urlopen, \
@@ -110,6 +111,12 @@ class Source(Debuggable):  # pylint: disable=R0902
     #: attribute of Package entries will be set to the value ``ptype``
     #: when they are handled by :mod:`Bcfg2.Server.Plugins.Packages`.
     ptype = None
+
+    #: The default compression format used by this Source class. This
+    #: is the file the package metadata files should be loaded. It is
+    #: used if a source has no custom compression format specified
+    #: in the :attr:`server_options`.
+    default_compression = 'None'
 
     def __init__(self, basepath, xsource):  # pylint: disable=R0912
         """
@@ -327,6 +334,38 @@ class Source(Debuggable):  # pylint: disable=R0902
                 else:
                     self.conditions.append(lambda m, el=el:
                                            el.get("name") == m.hostname)
+
+    def _get_reader(self):
+        ctype = self.default_compression
+        if 'compression' in self.server_options:
+            ctype = self.server_options['compression']
+
+        for mod in Bcfg2.Options.setup.packages_readers:
+            if mod.__name__.endswith(".%s" % ctype.title()):
+                return getattr(mod, "%sReader" % ctype.title())
+
+        raise ValueError("Packages: Unknown compression type %s" % ctype)
+
+    def _get_extension(self):
+        cls = self._get_reader()
+        if cls.extension is None:
+            raise ValueError("%s does not define an extension" %
+                             cls.__name__)
+        return cls.extension
+
+    def build_filename(self, basename):
+        extension = self._get_extension()
+        if extension == '':
+            return basename
+        return "%s.%s" % (basename, extension)
+
+    def open_file(self, fname):
+        try:
+            cls = self._get_reader()
+            return cls(fname)
+        except IOError:
+            self.logger.error("Packages: Failed to read file %s" % fname)
+            raise
 
     @property
     def cachekey(self):

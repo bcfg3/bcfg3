@@ -14,6 +14,7 @@ from Bcfg2.Compat import urlopen, HTTPError, URLError
 from Bcfg2.Server.Plugins.Packages.Collection import Collection, \
     get_collection_class
 from Bcfg2.Server.Plugins.Packages.PackagesSources import PackagesSources
+from Bcfg2.Server.Plugins.Packages.Readers import get_readers
 from Bcfg2.Server.Statistics import track_statistics
 
 
@@ -34,6 +35,12 @@ class PackagesBackendAction(Bcfg2.Options.ComponentAction):
     bases = ['Bcfg2.Server.Plugins.Packages']
     module = True
     fail_silently = True
+
+
+class PackagesReadersAction(Bcfg2.Options.ComponentAction):
+    """ ComponentAction to load Packages readers """
+    bases = ['Bcfg2.Server.Plugins.Packages.Readers']
+    module = True
 
 
 class Packages(Bcfg2.Server.Plugin.Plugin,
@@ -82,7 +89,13 @@ class Packages(Bcfg2.Server.Plugin.Plugin,
             cf=("packages", "apt_config"),
             help="The default path for generated apt configs",
             default="/etc/apt/sources.list.d/"
-            "bcfg2-packages-generated-sources.list")]
+            "bcfg2-packages-generated-sources.list"),
+        Bcfg2.Options.Option(
+            cf=("packages", "readers"), dest="packages_readers",
+            help="Packages readers to load",
+            type=Bcfg2.Options.Types.comma_list,
+            action=PackagesReadersAction,
+            default=get_readers())]
 
     #: Packages is an alternative to
     #: :mod:`Bcfg2.Server.Plugins.Pkgmgr` and conflicts with it.
