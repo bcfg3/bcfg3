@@ -86,6 +86,16 @@ class AptSource(Source):
         else:
             return ["%s%s" % (self.rawurl, fname)]
 
+    def _get_arch(self, fname):
+        if not self.rawurl:
+            return [x
+                    for x in fname.split('@')
+                    if x.startswith('binary-')][0][7:]
+
+        # RawURL entries assume that they only have one <Arch></Arch>
+        # element and that it is the architecture of the source.
+        return self.arches[0]
+
     def read_files(self):  # pylint: disable=R0912
         bdeps = dict()
         brecs = dict()
@@ -93,14 +103,7 @@ class AptSource(Source):
         self.pkgnames = set()
         self.essentialpkgs = set()
         for fname in self.files:
-            if not self.rawurl:
-                barch = [x
-                         for x in fname.split('@')
-                         if x.startswith('binary-')][0][7:]
-            else:
-                # RawURL entries assume that they only have one <Arch></Arch>
-                # element and that it is the architecture of the source.
-                barch = self.arches[0]
+            barch = self._get_arch(fname)
             if barch not in bdeps:
                 bdeps[barch] = dict()
                 brecs[barch] = dict()

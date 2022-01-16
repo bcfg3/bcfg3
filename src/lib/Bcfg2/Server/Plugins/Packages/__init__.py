@@ -64,7 +64,7 @@ class Packages(Bcfg2.Server.Plugin.Plugin,
             help="Packages backends to load",
             type=Bcfg2.Options.Types.comma_list,
             action=PackagesBackendAction,
-            default=['Yum', 'Apt', 'Pac', 'Pkgng']),
+            default=['Yum', 'Apt', 'Pac', 'Pkgng', 'Pyapt']),
         Bcfg2.Options.PathOption(
             cf=("packages", "cache"), dest="packages_cache",
             help="Path to the Packages cache",
