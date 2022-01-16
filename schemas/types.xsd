@@ -28,6 +28,7 @@
       <xsd:enumeration value='ebuild' />
       <xsd:enumeration value='yum' />
       <xsd:enumeration value='freebsdpkg' />
+      <xsd:enumeration value='dummy' />
     </xsd:restriction>
   </xsd:simpleType>
 
