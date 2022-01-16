@@ -57,7 +57,7 @@ from Bcfg2.Compat import HTTPError, HTTPBasicAuthHandler, \
 from Bcfg2.Server.Statistics import track_statistics
 
 
-def fetch_url(url):
+def fetch_url(url, opts):
     """ Return the content of the given URL.
 
     :param url: The URL to fetch content from.
@@ -74,8 +74,14 @@ def fetch_url(url):
         url = mobj.group(1) + mobj.group(4)
         auth = HTTPBasicAuthHandler(HTTPPasswordMgrWithDefaultRealm())
         auth.add_password(None, url, user, passwd)
-        install_opener(build_opener(auth))
-    return urlopen(url).read()
+        req = build_opener(auth)
+    else:
+        req = build_opener()
+
+    if 'user-agent' in opts:
+        req.addheaders = [('User-Agent', opts['user-agent'])]
+
+    return req.open(url).read()
 
 
 class SourceInitError(Exception):
@@ -735,7 +741,7 @@ class Source(Debuggable):  # pylint: disable=R0902
             self.logger.info("Packages: Updating %s" % url)
             fname = self.escape_url(url)
             try:
-                open(fname, 'wb').write(fetch_url(url))
+                open(fname, 'wb').write(fetch_url(url, self.server_options))
             except ValueError:
                 self.logger.error("Packages: Bad url string %s" % url)
                 raise
