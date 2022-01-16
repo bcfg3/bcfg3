@@ -1,3 +1,49 @@
+bcfg2 (1.4.0pre2-0.1+spline4) unstable; urgency=medium
+
+  * debconf: Verify seen value
+  * debconf: Support removing of conf entries
+
+ -- Alexander Sulfrian <asulfrian@zedat.fu-berlin.de>  Sun, 30 Jan 2022 05:04:26 +0100
+
+bcfg2 (1.4.0pre2-0.1+spline3) unstable; urgency=medium
+
+  * debconf: Add ability to ignore conf settings 
+
+ -- Alexander Sulfrian <asulfrian@zedat.fu-berlin.de>  Sat, 29 Jan 2022 20:02:13 +0100
+
+bcfg2 (1.4.0pre2-0.1+spline2) unstable; urgency=medium
+
+  * Cfg: Block for FAM events after creating files
+  * SSLCA: root_ca is a BooleanOption
+  * PkgVars: Add support for multiple values
+  * PkgVars: Add new plugin to set vars for packages
+  * Packages: Allow to filter provided packages
+  * Packages: Add possibility to customize User-Agent
+  * Packages: Add repo options to additional_data
+  * Packages: Add 'pin' attribute
+  * Packages: Add priority to sources and sort them
+  * Packages: Add "pyapt" source type
+  * Packages: Support different compression methods
+  * debconf: Save current_value for reporting
+  * debconf: Add ConfEntry to Reporting
+  * debconf: Only start communicate process on demand
+  * debconf: Find extra entries
+  * debconf: Add client tool
+  * Client: Add dummy package client tool
+  * Packages: Add 'dummy' packages backend
+  * Packages: Ignore unicode errors in pkgng metadata
+  * Bundler: Use BoundBundle for the RequiredBundles
+  * Reporting: Set flag when interaction is fully imported
+  * APT: Do not install recommended packages
+  * APT: Save new package version for auto pkgs
+  * APT: Mark dependencies as automatic installed
+  * SSLCA: Fix certificate validation
+  * POSIXUsers: Add filters for supplementary gids
+  * debconf: Add schema
+  * Server: Ignore directories containing a .bcfg2-ignore file
+
+ -- Alexander Sulfrian <asulfrian@zedat.fu-berlin.de>  Sun, 16 Jan 2022 20:53:03 +0100
+
 bcfg2 (1.4.0pre2-0.1) UNRELEASED; urgency=low
 
   * Helper scripts packed in bcfg2-utils
