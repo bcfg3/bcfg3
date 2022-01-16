@@ -589,6 +589,9 @@ class Source(Debuggable):  # pylint: disable=R0902
                 self.logger.warning("%s provides no packages for %s" %
                                     (self, agrp))
                 continue
+            if (agrp in self.blacklist or
+                    (len(self.whitelist) != 0 and agrp not in self.whitelist)):
+                continue
             for key, value in list(self.provides[agrp].items()):
                 if key not in vdict:
                     vdict[key] = set(value)
@@ -815,7 +818,9 @@ class Source(Debuggable):  # pylint: disable=R0902
         :returns: list of strings
         """
         for arch in self.get_arches(metadata):
-            if package in self.provides[arch]:
+            if (package in self.provides[arch] and
+                    package not in self.blacklist and
+                    (len(self.whitelist) == 0 or package in self.whitelist)):
                 return self.provides[arch][package]
         return []
 
