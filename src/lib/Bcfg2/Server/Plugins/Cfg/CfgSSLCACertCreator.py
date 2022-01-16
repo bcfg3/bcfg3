@@ -216,15 +216,12 @@ class CfgSSLCACertCreator(XMLCfgCreator, CfgVerifier):
         chaincert = ca.get('chaincert')
         cmd = ["openssl", "verify"]
         is_root = ca.get('root_ca', "false").lower() == 'true'
-        if is_root:
-            cmd.append("-CAfile")
-        else:
-            # verifying based on an intermediate cert
-            cmd.extend(["-purpose", "sslserver", "-untrusted"])
-        cmd.extend([chaincert, filename])
+        if not is_root:
+            cmd.append("-partial_chain")
+        cmd.extend(["-trusted", chaincert, filename])
         self.debug_log("Cfg: Verifying %s against CA" % entry.get("name"))
         result = self.cmd.run(cmd)
-        if result.stdout == cert + ": OK\n":
+        if result.stdout == filename + ": OK\n":
             self.debug_log("Cfg: %s verified successfully against CA" %
                            entry.get("name"))
         else:
