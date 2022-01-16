@@ -46,6 +46,9 @@ backwards-incompatible user-facing changes
   your queries default to the class names and the Ldap plugin expires
   the metadata caches if the config file changes.
 
+* Ignore directories containing a .bcfg2-ignore file in various plugins
+  (Bundler, Defaults, Pkgmgr, Properties, PuppetENC, TemplateHelper, Trigger).
+
 Thanks
 ------
 
