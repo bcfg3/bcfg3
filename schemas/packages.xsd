@@ -18,6 +18,7 @@
       <xsd:enumeration value="apt"/>
       <xsd:enumeration value="pac"/>
       <xsd:enumeration value="pkgng"/>
+      <xsd:enumeration value="dummy"/>
     </xsd:restriction>
   </xsd:simpleType>
 
