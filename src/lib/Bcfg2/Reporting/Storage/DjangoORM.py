@@ -30,7 +30,7 @@ def load_django_models():
         FailureEntry, Performance, BaseEntry, ServiceEntry, ActionEntry, \
         POSIXGroupEntry, POSIXUserEntry, SEBooleanEntry, SEFcontextEntry, \
         SEInterfaceEntry, SELoginEntry, SEModuleEntry, SENodeEntry, \
-        SEPermissiveEntry, SEPortEntry, SEUserEntry
+        SEPermissiveEntry, SEPortEntry, SEUserEntry, ConfEntry
     # pylint: enable=W0602
 
     from Bcfg2.Reporting.models import \
@@ -39,7 +39,7 @@ def load_django_models():
         FailureEntry, Performance, BaseEntry, ServiceEntry, ActionEntry, \
         POSIXGroupEntry, POSIXUserEntry, SEBooleanEntry, SEFcontextEntry, \
         SEInterfaceEntry, SELoginEntry, SEModuleEntry, SENodeEntry, \
-        SEPermissiveEntry, SEPortEntry, SEUserEntry
+        SEPermissiveEntry, SEPortEntry, SEUserEntry, ConfEntry
 
 
 def get_all_field_names(model):
@@ -126,6 +126,11 @@ class DjangoORM(StorageBase):
         return self._import_default(entry, state,
                                     defaults=dict(status='check', rc=-1),
                                     mapping=dict(output="rc"))
+
+    def _import_Conf(self, entry, state):
+        return self._import_default(entry, state,
+                                    defaults=dict(),
+                                    mapping=dict())
 
     def _import_Package(self, entry, state):
         name = entry.get('name')

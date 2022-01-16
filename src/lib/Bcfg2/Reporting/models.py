@@ -153,6 +153,7 @@ class Interaction(models.Model):
     only_important = models.BooleanField(default=False)
 
     actions = models.ManyToManyField("ActionEntry")
+    confs = models.ManyToManyField("ConfEntry")
     packages = models.ManyToManyField("PackageEntry")
     paths = models.ManyToManyField("PathEntry")
     services = models.ManyToManyField("ServiceEntry")
@@ -174,7 +175,7 @@ class Interaction(models.Model):
                    'seports', 'sefcontexts', 'senodes',
                    'selogins', 'seusers', 'seinterfaces',
                    'sepermissives', 'semodules', 'posixusers',
-                   'posixgroups')
+                   'posixgroups', 'confs')
 
     # Formerly InteractionMetadata
     profile = models.ForeignKey("Group", related_name="+", null=True)
@@ -484,6 +485,33 @@ class ActionEntry(SuccessEntry):
     output = models.IntegerField(default=0)
 
     ENTRY_TYPE = r"Action"
+
+
+class ConfEntry(SuccessEntry):
+    """ Conf entry """
+    value = models.TextField(null=True)
+    current_value = models.TextField(null=True)
+
+    ENTRY_TYPE = r"Conf"
+
+    def conf_problem(self):
+        """Check for a conf problem."""
+        if not self.current_value:
+            return True
+        return self.value != self.current_value
+
+    def short_list(self):
+        """Return a list of problems"""
+        rv = super(ConfEntry, self).short_list()
+        if self.is_extra():
+            return rv
+        if not self.conf_problem() or not self.exists:
+            return rv
+        if not self.current_value:
+            rv.append("Missing")
+        else:
+            rv.append("Wrong value")
+        return rv
 
 
 class SEBooleanEntry(SuccessEntry):
@@ -797,7 +825,7 @@ class ServiceEntry(SuccessEntry):
         return rv
 
 
-ENTRY_TYPES = (ActionEntry, PackageEntry, PathEntry, ServiceEntry,
+ENTRY_TYPES = (ActionEntry, ConfEntry, PackageEntry, PathEntry, ServiceEntry,
                SEBooleanEntry, SEPortEntry, SEFcontextEntry, SENodeEntry,
                SELoginEntry, SEUserEntry, SEInterfaceEntry, SEPermissiveEntry,
                SEModuleEntry)
