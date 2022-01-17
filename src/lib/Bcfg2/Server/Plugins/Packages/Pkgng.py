@@ -1,6 +1,5 @@
 """ pkgng backend for :mod:`Bcfg2.Server.Plugins.Packages` """
 
-import lzma
 import tarfile
 
 try:
@@ -40,19 +39,30 @@ class PkgngSource(Source):
     #: PkgngSource sets the ``type`` on Package entries to "pkgng"
     ptype = 'pkgng'
 
+    #: The "packagesite" files of pkgng repositories are compressed
+    #: with "xz"
+    default_compression = 'xz'
+
+    def _get_extension(self):
+        extension = super(PkgngSource, self)._get_extension()
+        if extension == '':
+            return 'tar'
+        return 't%s' % extension
+
     @property
     def urls(self):
         """ A list of URLs to the base metadata file for each
         repository described by this source. """
+        fname = self.build_filename("packagesite")
         if not self.rawurl:
             rv = []
             for part in self.components:
                 for arch in self.arches:
-                    rv.append("%s/freebsd:%s:%s/%s/packagesite.txz" %
-                              (self.url, self.version, arch, part))
+                    rv.append("%s/freebsd:%s:%s/%s/%s" %
+                              (self.url, self.version, arch, part, fname))
             return rv
         else:
-            return ["%s/packagesite.txz" % self.rawurl]
+            return ["%s/%s" % (self.rawurl, fname)]
 
     def read_files(self):
         bdeps = dict()
@@ -70,12 +80,13 @@ class PkgngSource(Source):
             if barch not in bdeps:
                 bdeps[barch] = dict()
             try:
-                tar = tarfile.open(fileobj=lzma.LZMAFile(fname))
-                reader = tar.extractfile('packagesite.yaml')
+                reader = self.open_file(fname)
+                tar = tarfile.open(fileobj=reader)
+                packagesite = tar.extractfile('packagesite.yaml')
             except (IOError, tarfile.TarError):
                 self.logger.error("Packages: Failed to read file %s" % fname)
                 raise
-            for line in reader.readlines():
+            for line in packagesite.readlines():
                 pkg = json.loads(unicode(line, errors='ignore'))
                 pkgname = pkg['name']
                 self.pkgnames.add(pkgname)

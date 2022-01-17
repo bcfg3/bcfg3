@@ -226,6 +226,25 @@
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>
+    <xsd:attribute type="xsd:integer" name="priority">
+      <xsd:annotation>
+        <xsd:documentation>
+          The priority of the source. This is used to order the
+          sources. After sorting, the first source, that could
+          deliver the package, is used. If not supplied the default
+          priority is 500.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute type="xsd:string" name="pin">
+      <xsd:annotation>
+        <xsd:documentation>
+          Extra information for pinning. This information is used
+          to differ between the sources. Should be used in the
+          supported format of apt.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
     <xsd:attributeGroup ref="py:genshiAttrs"/>
   </xsd:complexType>
 

@@ -850,7 +850,7 @@ class YumCollection(Collection):
         return new
 
     @track_statistics()
-    def complete(self, packagelist, recommended=None):
+    def complete(self, packagelist, recommended=None, pinnings=None):
         """ Build a complete list of all packages and their dependencies.
 
         When using the Python yum libraries, this defers to the
@@ -868,7 +868,8 @@ class YumCollection(Collection):
                   resolved.
         """
         if not self.use_yum:
-            return Collection.complete(self, packagelist, recommended)
+            return Collection.complete(self, packagelist, recommended,
+                                       pinnings)
 
         lock = FileLock(os.path.join(self.cachefile, "lock"))
         slept = 0

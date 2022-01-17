@@ -87,6 +87,9 @@ class PacSource(Source):
     #: PacSource sets the ``type`` on Package entries to "pacman"
     ptype = 'pacman'
 
+    #: The database of pacman repositories is compressed with "gzip"
+    default_compression = 'gzip'
+
     def __init__(self, basepath, xsource):
         self.pacgroups = {}
 
@@ -113,9 +116,10 @@ class PacSource(Source):
         if not self.rawurl:
             rv = []
             for part in self.components:
+                filename = self.build_filename("%s.db.tar" % part)
                 for arch in self.arches:
-                    rv.append("%s%s/os/%s/%s.db.tar.gz" %
-                              (self.url, part, arch, part))
+                    rv.append("%s%s/os/%s/%s" %
+                              (self.url, part, arch, filename))
             return rv
         else:
             raise Exception("PacSource : RAWUrl not supported (yet)")
@@ -140,7 +144,8 @@ class PacSource(Source):
                 bprov[barch] = {}
             try:
                 self.debug_log("Packages: try to read %s" % fname)
-                tar = tarfile.open(fname, "r")
+                reader = self.open_file(fname)
+                tar = tarfile.open(fileobj=reader)
             except (IOError, tarfile.TarError):
                 self.logger.error("Packages: Failed to read file %s" % fname)
                 raise
@@ -185,6 +190,7 @@ class PacSource(Source):
                         self.pacgroups[group].append(pkgname)
 
             tar.close()
+            reader.close()
         self.process_files(bdeps, bprov, brecs)
     read_files.__doc__ = Source.read_files.__doc__
 

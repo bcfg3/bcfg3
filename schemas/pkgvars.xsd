@@ -1,0 +1,43 @@
+<xsd:schema xmlns:xsd='http://www.w3.org/2001/XMLSchema'
+            xmlns:py="http://genshi.edgewall.org/">
+
+  <xsd:annotation>
+    <xsd:documentation>
+      XML-Schema-Definition für PkgVars/*.xml
+      Alexander Sulfrian
+    </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:import namespace="http://genshi.edgewall.org/"
+              schemaLocation="genshi.xsd"/>
+
+  <xsd:complexType name='pkgVarType'>
+    <xsd:attribute type='xsd:string' name='name'/>
+
+    <xsd:attribute type='xsd:string' name='pin'/>
+    <xsd:attribute type='xsd:string' name='use'/>
+    <xsd:attribute type='xsd:string' name='keywords'/>
+
+    <xsd:attributeGroup ref="py:genshiAttrs"/>
+  </xsd:complexType>
+
+  <xsd:complexType name='containerType'>
+    <xsd:choice maxOccurs='unbounded'>
+      <xsd:element name='Package' type='pkgVarType'/>
+      <xsd:element name='Client' type='containerType'/>
+      <xsd:element name='Group' type='containerType'/>
+    </xsd:choice>
+    <xsd:attribute name='name' type='xsd:string' use='required'/>
+    <xsd:attribute name='negate' type='xsd:boolean'/>
+  </xsd:complexType>
+
+  <xsd:complexType name='pkgVarsType'>
+    <xsd:choice minOccurs='0' maxOccurs='unbounded'>
+      <xsd:element name='Package' type='pkgVarType'/>
+      <xsd:element name='Client' type='containerType'/>
+      <xsd:element name='Group' type='containerType'/>
+    </xsd:choice>
+  </xsd:complexType>
+
+  <xsd:element name='PkgVars' type='pkgVarsType'/>
+</xsd:schema>

@@ -14,6 +14,7 @@ from Bcfg2.Compat import urlopen, HTTPError, URLError
 from Bcfg2.Server.Plugins.Packages.Collection import Collection, \
     get_collection_class
 from Bcfg2.Server.Plugins.Packages.PackagesSources import PackagesSources
+from Bcfg2.Server.Plugins.Packages.Readers import get_readers
 from Bcfg2.Server.Statistics import track_statistics
 
 
@@ -34,6 +35,12 @@ class PackagesBackendAction(Bcfg2.Options.ComponentAction):
     bases = ['Bcfg2.Server.Plugins.Packages']
     module = True
     fail_silently = True
+
+
+class PackagesReadersAction(Bcfg2.Options.ComponentAction):
+    """ ComponentAction to load Packages readers """
+    bases = ['Bcfg2.Server.Plugins.Packages.Readers']
+    module = True
 
 
 class Packages(Bcfg2.Server.Plugin.Plugin,
@@ -57,7 +64,7 @@ class Packages(Bcfg2.Server.Plugin.Plugin,
             help="Packages backends to load",
             type=Bcfg2.Options.Types.comma_list,
             action=PackagesBackendAction,
-            default=['Yum', 'Apt', 'Pac', 'Pkgng', 'Dummy']),
+            default=['Yum', 'Apt', 'Pac', 'Pkgng', 'Dummy', 'Pyapt']),
         Bcfg2.Options.PathOption(
             cf=("packages", "cache"), dest="packages_cache",
             help="Path to the Packages cache",
@@ -82,7 +89,13 @@ class Packages(Bcfg2.Server.Plugin.Plugin,
             cf=("packages", "apt_config"),
             help="The default path for generated apt configs",
             default="/etc/apt/sources.list.d/"
-            "bcfg2-packages-generated-sources.list")]
+            "bcfg2-packages-generated-sources.list"),
+        Bcfg2.Options.Option(
+            cf=("packages", "readers"), dest="packages_readers",
+            help="Packages readers to load",
+            type=Bcfg2.Options.Types.comma_list,
+            action=PackagesReadersAction,
+            default=get_readers())]
 
     #: Packages is an alternative to
     #: :mod:`Bcfg2.Server.Plugins.Pkgmgr` and conflicts with it.
@@ -315,6 +328,10 @@ class Packages(Bcfg2.Server.Plugin.Plugin,
         groups = []
         recommended = dict()
 
+        pinned_src = dict()
+        if hasattr(metadata, 'PkgVars'):
+            pinned_src = metadata.PkgVars['pin']
+
         for struct in structures:
             for pkg in struct.xpath('//Package | //BoundPackage'):
                 if pkg.get("name"):
@@ -356,11 +373,11 @@ class Packages(Bcfg2.Server.Plugin.Plugin,
         base.update(collection.get_essential())
 
         # check for this set of packages in the package cache
-        pkey = hash(tuple(base))
+        pkey = hash((tuple(base), tuple(recommended), tuple(pinned_src)))
         pcache = Bcfg2.Server.Cache.Cache("Packages", "pkg_sets",
                                           collection.cachekey)
         if pkey not in pcache:
-            pcache[pkey] = collection.complete(base, recommended)
+            pcache[pkey] = collection.complete(base, recommended, pinned_src)
         packages, unknown = pcache[pkey]
         if unknown:
             self.logger.info("Packages: Got %d unknown entries" % len(unknown))

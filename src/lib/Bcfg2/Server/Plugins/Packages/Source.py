@@ -49,6 +49,7 @@ in your ``Source`` subclass.  For an example of this kind of
 import os
 import re
 import sys
+import Bcfg2.Options
 from Bcfg2.Logger import Debuggable
 from Bcfg2.Compat import HTTPError, HTTPBasicAuthHandler, \
     HTTPPasswordMgrWithDefaultRealm, install_opener, build_opener, urlopen, \
@@ -56,7 +57,7 @@ from Bcfg2.Compat import HTTPError, HTTPBasicAuthHandler, \
 from Bcfg2.Server.Statistics import track_statistics
 
 
-def fetch_url(url):
+def fetch_url(url, opts):
     """ Return the content of the given URL.
 
     :param url: The URL to fetch content from.
@@ -73,8 +74,14 @@ def fetch_url(url):
         url = mobj.group(1) + mobj.group(4)
         auth = HTTPBasicAuthHandler(HTTPPasswordMgrWithDefaultRealm())
         auth.add_password(None, url, user, passwd)
-        install_opener(build_opener(auth))
-    return urlopen(url).read()
+        req = build_opener(auth)
+    else:
+        req = build_opener()
+
+    if 'user-agent' in opts:
+        req.addheaders = [('User-Agent', opts['user-agent'])]
+
+    return req.open(url).read()
 
 
 class SourceInitError(Exception):
@@ -110,6 +117,12 @@ class Source(Debuggable):  # pylint: disable=R0902
     #: attribute of Package entries will be set to the value ``ptype``
     #: when they are handled by :mod:`Bcfg2.Server.Plugins.Packages`.
     ptype = None
+
+    #: The default compression format used by this Source class. This
+    #: is the file the package metadata files should be loaded. It is
+    #: used if a source has no custom compression format specified
+    #: in the :attr:`server_options`.
+    default_compression = 'None'
 
     def __init__(self, basepath, xsource):  # pylint: disable=R0912
         """
@@ -188,6 +201,12 @@ class Source(Debuggable):  # pylint: disable=R0902
         #: The "name" attribute from :attr:`xsource`
         self.name = None
 
+        #: The "priority" attribute from :attr:`xsource`
+        self.priority = xsource.get('priority', 500)
+
+        #: The "pin" attribute from :attr:`xsource`
+        self.pin = xsource.get('pin', '')
+
         #: A list of predicates that are used to determine if this
         #: source applies to a given
         #: :class:`Bcfg2.Server.Plugins.Metadata.ClientMetadata`
@@ -250,11 +269,13 @@ class Source(Debuggable):  # pylint: disable=R0902
         for arch in self.arches:
             if self.url:
                 usettings = [dict(version=self.version, component=comp,
-                                  arch=arch, debsrc=self.debsrc)
+                                  arch=arch, debsrc=self.debsrc,
+                                  priority=self.priority, pin=self.pin)
                              for comp in self.components]
             else:  # rawurl given
                 usettings = [dict(version=self.version, component=None,
-                                  arch=arch, debsrc=self.debsrc)]
+                                  arch=arch, debsrc=self.debsrc,
+                                  priority=self.priority, pin=self.pin)]
 
             for setting in usettings:
                 if not self.rawurl:
@@ -263,6 +284,8 @@ class Source(Debuggable):  # pylint: disable=R0902
                     setting['baseurl'] = self.rawurl
                 setting['url'] = baseurl % setting
                 setting['name'] = self.get_repo_name(setting)
+                setting['options'] = dict(server=self.server_options,
+                                          client=self.client_options)
             self.url_map.extend(usettings)
 
     def _init_attributes(self, xsource):
@@ -327,6 +350,38 @@ class Source(Debuggable):  # pylint: disable=R0902
                 else:
                     self.conditions.append(lambda m, el=el:
                                            el.get("name") == m.hostname)
+
+    def _get_reader(self):
+        ctype = self.default_compression
+        if 'compression' in self.server_options:
+            ctype = self.server_options['compression']
+
+        for mod in Bcfg2.Options.setup.packages_readers:
+            if mod.__name__.endswith(".%s" % ctype.title()):
+                return getattr(mod, "%sReader" % ctype.title())
+
+        raise ValueError("Packages: Unknown compression type %s" % ctype)
+
+    def _get_extension(self):
+        cls = self._get_reader()
+        if cls.extension is None:
+            raise ValueError("%s does not define an extension" %
+                             cls.__name__)
+        return cls.extension
+
+    def build_filename(self, basename):
+        extension = self._get_extension()
+        if extension == '':
+            return basename
+        return "%s.%s" % (basename, extension)
+
+    def open_file(self, fname):
+        try:
+            cls = self._get_reader()
+            return cls(fname)
+        except IOError:
+            self.logger.error("Packages: Failed to read file %s" % fname)
+            raise
 
     @property
     def cachekey(self):
@@ -534,6 +589,9 @@ class Source(Debuggable):  # pylint: disable=R0902
                 self.logger.warning("%s provides no packages for %s" %
                                     (self, agrp))
                 continue
+            if (agrp in self.blacklist or
+                    (len(self.whitelist) != 0 and agrp not in self.whitelist)):
+                continue
             for key, value in list(self.provides[agrp].items()):
                 if key not in vdict:
                     vdict[key] = set(value)
@@ -686,7 +744,7 @@ class Source(Debuggable):  # pylint: disable=R0902
             self.logger.info("Packages: Updating %s" % url)
             fname = self.escape_url(url)
             try:
-                open(fname, 'wb').write(fetch_url(url))
+                open(fname, 'wb').write(fetch_url(url, self.server_options))
             except ValueError:
                 self.logger.error("Packages: Bad url string %s" % url)
                 raise
@@ -760,7 +818,9 @@ class Source(Debuggable):  # pylint: disable=R0902
         :returns: list of strings
         """
         for arch in self.get_arches(metadata):
-            if package in self.provides[arch]:
+            if (package in self.provides[arch] and
+                    package not in self.blacklist and
+                    (len(self.whitelist) == 0 or package in self.whitelist)):
                 return self.provides[arch][package]
         return []
 
