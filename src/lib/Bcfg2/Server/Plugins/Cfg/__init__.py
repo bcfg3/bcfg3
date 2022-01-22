@@ -306,6 +306,8 @@ class CfgCreator(CfgBaseFileMatcher):
         .. autoattribute:: Bcfg2.Server.Plugins.Cfg.CfgInfo.__specific__
         """
         CfgBaseFileMatcher.__init__(self, fname, None)
+        self.cfg = get_cfg()
+        self.core = self.cfg.core
 
     def create_data(self, entry, metadata):
         """ Create new data for the given entry and write it to disk
@@ -391,6 +393,7 @@ class CfgCreator(CfgBaseFileMatcher):
 
         try:
             open(fileloc, 'wb').write(data)
+            self.core.block_for_fam_events()
         except IOError:
             err = sys.exc_info()[1]
             raise CfgCreationError("Could not write %s: %s" % (fileloc, err))

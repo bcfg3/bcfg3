@@ -8,7 +8,7 @@ import tempfile
 import lxml.etree
 from Bcfg2.Utils import Executor
 from Bcfg2.Server.Plugin import StructFile, PluginExecutionError
-from Bcfg2.Server.Plugins.Cfg import CfgCreator, CfgCreationError, get_cfg
+from Bcfg2.Server.Plugins.Cfg import CfgCreator, CfgCreationError
 
 
 class CfgPublicKeyCreator(CfgCreator, StructFile):
@@ -33,8 +33,6 @@ class CfgPublicKeyCreator(CfgCreator, StructFile):
     def __init__(self, fname):
         CfgCreator.__init__(self, fname)
         StructFile.__init__(self, fname)
-        self.cfg = get_cfg()
-        self.core = self.cfg.core
         self.cmd = Executor()
 
     def create_data(self, entry, metadata):
