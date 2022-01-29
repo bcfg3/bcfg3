@@ -68,6 +68,9 @@ class Debconf(Bcfg2.Client.Tools.Tool):
 
     def VerifyConf(self, entry, _modlist):
         """ Verify the given Debconf entry. """
+        if entry.get('ignore', 'false').lower() == 'true':
+            return True
+
         (_, current_value) = self.debconf_get(entry.get('name'))
         entry.set('current_value', current_value)
         return current_value == entry.get('value')

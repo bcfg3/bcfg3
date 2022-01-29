@@ -570,6 +570,15 @@
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>
+    <xsd:attribute type="xsd:boolean" name="ignore" default="false">
+      <xsd:annotation>
+        <xsd:documentation>
+          If you set this to "true" the configuration setting will be ignored
+          and not updated. This is usefull to remove a setting from the list of
+          extra entries.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
     <xsd:attributeGroup ref="py:genshiAttrs"/>
   </xsd:complexType>
 </xsd:schema>
