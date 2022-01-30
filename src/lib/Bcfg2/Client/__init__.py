@@ -110,7 +110,7 @@ class Client(object):
                 help='Only verify the given bundle(s)'),
             Bcfg2.Options.Option(
                 '-r', '--remove',
-                choices=['all', 'services', 'packages', 'users'],
+                choices=['all', 'services', 'packages', 'users', 'conf'],
                 help='Force removal of additional configuration items')),
         Bcfg2.Options.ExclusiveOptionGroup(
             Bcfg2.Options.PathOption(
@@ -640,6 +640,9 @@ class Client(object):
             elif Bcfg2.Options.setup.remove == 'users':
                 self.removal = [entry for entry in self.extra
                                 if entry.tag in ['POSIXUser', 'POSIXGroup']]
+            elif Bcfg2.Options.setup.remove == 'conf':
+                self.removal = [entry for entry in self.extra
+                                if entry.tag == 'Conf']
 
         candidates = [entry for entry in self.states
                       if not self.states[entry]]

@@ -96,7 +96,17 @@ class Debconf(Bcfg2.Client.Tools.Tool):
 
         return result
     Install.__doc__ = Bcfg2.Client.Tools.Tool.Install.__doc__
-    
+
+    def Remove(self, entries):
+        try:
+            for entry in entries:
+                self.debconf_reset(entry.get('name'))
+                self.modified += entry
+        finally:
+            self._stop_debconf()
+            self.extra = self.FindExtra()
+    Remove.__doc__ = Bcfg2.Client.Tools.Tool.Remove.__doc__
+
     def FindExtra(self):
         specified = [entry.get('name')
                      for entry in self.getSupportedEntries()]
