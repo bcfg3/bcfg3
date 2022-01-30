@@ -884,6 +884,7 @@ class _ReportsCmd(AdminCmd):  # pylint: disable=W0223
                                 Bcfg2.Reporting.models.Bundle,
                                 Bcfg2.Reporting.models.FailureEntry,
                                 Bcfg2.Reporting.models.ActionEntry,
+                                Bcfg2.Reporting.models.ConfEntry,
                                 Bcfg2.Reporting.models.PathEntry,
                                 Bcfg2.Reporting.models.PackageEntry,
                                 Bcfg2.Reporting.models.PathEntry,

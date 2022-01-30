@@ -122,6 +122,13 @@
           </xsd:documentation>
         </xsd:annotation>
       </xsd:element>
+      <xsd:element name='Conf' type='ConfType'>
+        <xsd:annotation>
+          <xsd:documentation>
+            Fully bound description of a Conf entry.
+          </xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
       <xsd:element name='Group' type='RContainerType'>
         <xsd:annotation>
           <xsd:documentation>
