@@ -53,7 +53,7 @@ class Debconf(Bcfg2.Client.Tools.Tool):
             return (False, None)
 
         (_, seen) = self._debconf_reply('FGET %s seen\n' % key)
-        return (seen, value)
+        return (seen == 'true', value)
 
     def debconf_set(self, key, value):
         (success, _) = self._debconf_reply('SET %s %s\n' % (key, value))
@@ -71,9 +71,12 @@ class Debconf(Bcfg2.Client.Tools.Tool):
         if entry.get('ignore', 'false').lower() == 'true':
             return True
 
-        (_, current_value) = self.debconf_get(entry.get('name'))
+        (seen, current_value) = self.debconf_get(entry.get('name'))
+        if not seen:
+            current_value = '%s (not seen)' % current_value
         entry.set('current_value', current_value)
-        return current_value == entry.get('value')
+
+        return seen and current_value == entry.get('value')
 
     def InstallConf(self, entry):
         """ Install the given Debconf entry. """
