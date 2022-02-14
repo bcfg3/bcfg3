@@ -171,10 +171,7 @@ class CfgSSLCACertCreator(XMLCfgCreator, CfgVerifier):
         os.fdopen(fd, 'w').write(data)
         cert = self.XMLMatch(metadata).find("Cert")
         try:
-            if cert.get('self_sign', 'false') != 'true':
-                ca = self.get_ca(cert.get('ca', 'default'))
-                if ca.get('chaincert'):
-                    self.verify_cert_against_ca(fname, entry, metadata)
+            self.verify_cert_against_ca(fname, entry, metadata)
             self.verify_cert_against_key(fname,
                                          self._get_keyfile(cert, metadata))
         finally:
@@ -218,12 +215,17 @@ class CfgSSLCACertCreator(XMLCfgCreator, CfgVerifier):
         and that it has not expired.
         """
         cert = self.XMLMatch(metadata).find("Cert")
-        ca = self.get_ca(cert.get("ca", "default"))
-        chaincert = ca.get('chaincert')
         cmd = ["openssl", "verify"]
-        if not ca.get('root_ca', False):
-            cmd.append("-partial_chain")
-        cmd.extend(["-trusted", chaincert, filename])
+        trusted = filename
+        if cert.get('self_sign', 'false') != 'true':
+            ca = self.get_ca(cert.get("ca", "default"))
+            chaincert = ca.get('chaincert')
+            if chaincert is not None:
+                trusted = chaincert
+            if not ca.get('root_ca', False):
+                cmd.append("-partial_chain")
+        cmd.extend(["-trusted", trusted, filename])
+
         self.debug_log("Cfg: Verifying %s against CA" % entry.get("name"))
         result = self.cmd.run(cmd)
         if result.stdout == filename + ": OK\n":
