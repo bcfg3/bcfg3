@@ -130,15 +130,20 @@ class CfgSSLCACertCreator(XMLCfgCreator, CfgVerifier):
         """ generate a new cert """
         self.logger.info("Cfg: Generating new SSL cert for %s" % self.name)
         cert = self.XMLMatch(metadata).find("Cert")
-        ca = self.get_ca(cert.get('ca', 'default'))
-        req = self.build_request(self._get_keyfile(cert, metadata), metadata)
+        keyfile = self._get_keyfile(cert, metadata)
+        req = self.build_request(keyfile, metadata)
         try:
             days = cert.get('days', '365')
-            cmd = ["openssl", "ca", "-config", ca['config'], "-in", req,
-                   "-days", days, "-batch"]
-            passphrase = ca.get('passphrase')
-            if passphrase:
-                cmd.extend(["-passin", "pass:%s" % passphrase])
+            if cert.get('self_sign', 'false') != 'true':
+                ca = self.get_ca(cert.get('ca', 'default'))
+                cmd = ["openssl", "ca", "-config", ca['config'],
+                       "-in", req, "-days", days, "-batch"]
+                passphrase = ca.get('passphrase')
+                if passphrase:
+                    cmd.extend(["-passin", "pass:%s" % passphrase])
+            else:
+                cmd = ["openssl", "req", "-in", req, "-x509",
+                       "-days", days, "-key", keyfile, "-batch"]
             result = self.cmd.run(cmd)
             if not result.success:
                 raise CfgCreationError("Failed to generate cert: %s" %
@@ -165,10 +170,11 @@ class CfgSSLCACertCreator(XMLCfgCreator, CfgVerifier):
                        "verification" % (entry.get("name"), fname))
         os.fdopen(fd, 'w').write(data)
         cert = self.XMLMatch(metadata).find("Cert")
-        ca = self.get_ca(cert.get('ca', 'default'))
         try:
-            if ca.get('chaincert'):
-                self.verify_cert_against_ca(fname, entry, metadata)
+            if cert.get('self_sign', 'false') != 'true':
+                ca = self.get_ca(cert.get('ca', 'default'))
+                if ca.get('chaincert'):
+                    self.verify_cert_against_ca(fname, entry, metadata)
             self.verify_cert_against_key(fname,
                                          self._get_keyfile(cert, metadata))
         finally:

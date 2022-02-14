@@ -98,6 +98,14 @@
         </xsd:documentation>
       </xsd:annotation>
     </xsd:attribute>
+    <xsd:attribute type="xsd:boolean" name="self_sign" default="false">
+      <xsd:annotation>
+        <xsd:documentation>
+          Create a self signed certificate. If you set this to ``true``,
+          you do not need a ca setting.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
     <xsd:attribute type="xsd:integer" name="days" default="365">
       <xsd:annotation>
         <xsd:documentation>
