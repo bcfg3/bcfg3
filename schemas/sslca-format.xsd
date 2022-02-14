@@ -1,0 +1,150 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:py="http://genshi.edgewall.org/" xml:lang="en">
+  <xsd:annotation>
+    <xsd:documentation>
+      Schema for :ref:`server-plugins-generators-cfg-ssl-certificates`
+      ``sslformat.xml``
+    </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:import namespace="http://genshi.edgewall.org/"
+              schemaLocation="genshi.xsd"/>
+
+  <xsd:complexType name="SSLCAFormatGroupType">
+    <xsd:annotation>
+      <xsd:documentation>
+        An **SSLCAFormatGroupType** is a tag used to provide logic.
+        Child entries of an SSLCAFormatGroupType tag only apply to
+        machines that match the condition specified -- either
+        membership in a group, or a matching client name.
+        :xml:attribute:`SSLCAFormatGroupType:negate` can be set to negate
+        the sense of the match.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:choice minOccurs="1" maxOccurs="unbounded">
+      <xsd:group ref="py:genshiElements"/>
+      <xsd:element name="Group" type="SSLCAFormatGroupType"/>
+      <xsd:element name="Client" type="SSLCAFormatGroupType"/>
+      <xsd:element name="Cert" type="CertFormatType"/>
+      <xsd:element name="Key" type="KeyFormatType"/>
+      <xsd:element name="Format" type="FormatType"/>
+    </xsd:choice>
+    <xsd:attribute name='name' type='xsd:string'>
+      <xsd:annotation>
+        <xsd:documentation>
+          The name of the client or group to match on.  Child entries
+          will only apply to this client or group (unless
+          :xml:attribute:`SSLCAFormatGroupType:negate` is set).
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name='negate' type='xsd:boolean'>
+      <xsd:annotation>
+        <xsd:documentation>
+          Negate the sense of the match, so that child entries only
+          apply to a client if it is not a member of the given group
+          or does not have the given name.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attributeGroup ref="py:genshiAttrs"/>
+  </xsd:complexType>
+
+  <xsd:simpleType name="CertFormatTypeEnum">
+    <xsd:annotation>
+      <xsd:documentation>
+        Available cert formats
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:token">
+      <xsd:enumeration value="pem"/>
+      <xsd:enumeration value="der"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="KeyFormatTypeEnum">
+    <xsd:annotation>
+      <xsd:documentation>
+        Available ker formats
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:token">
+      <xsd:enumeration value="pem"/>
+      <xsd:enumeration value="der"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:complexType name="CertFormatType">
+    <xsd:attribute type="CertFormatTypeEnum" name="format" default='pem'>
+      <xsd:annotation>
+        <xsd:documentation>
+	  Format of the cert in the generated format. Currently only ``pem``
+          and ``der`` is supported.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attributeGroup ref="py:genshiAttrs"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="KeyFormatType">
+    <xsd:attribute type="KeyFormatTypeEnum" name="format" default='pem'>
+      <xsd:annotation>
+        <xsd:documentation>
+	  Format of the key in the generated format. Currently only ``pem``
+          and ``der`` is supported.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attributeGroup ref="py:genshiAttrs"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="FormatType">
+    <xsd:choice minOccurs="1" maxOccurs="unbounded">
+      <xsd:group ref="py:genshiElements"/>
+      <xsd:element name="Group" type="SSLCAFormatGroupType"/>
+      <xsd:element name="Client" type="SSLCAFormatGroupType"/>
+      <xsd:element name="Cert" type="CertFormatType"/>
+      <xsd:element name="Key" type="KeyFormatType"/>
+      <xsd:element name="Format" type="FormatType"/>
+    </xsd:choice>
+    <xsd:attribute name="cert" type="xsd:string">
+      <xsd:annotation>
+        <xsd:documentation>
+          The full path to the cert entry to use for this format.
+          This is the *client* path; e.g., for a cert defined at
+          ``/var/lib/bcfg2/SSLCA/etc/pki/tls/private/foo.pem/sslcert.xml``,
+          **cert** should be ``/etc/pki/tls/private/foo.pem``. This
+          if required if the cert is used in the format.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="key" type="xsd:string">
+      <xsd:annotation>
+        <xsd:documentation>
+          The full path to the key entry to use for this certificate.
+          This is the *client* path; e.g., for a key defined at
+          ``/var/lib/bcfg2/SSLCA/etc/pki/tls/private/foo.key/sslkey.xml``,
+          **key** should be ``/etc/pki/tls/private/foo.key``. This is
+          only required if the key is used in the format and **cert**
+          is not a SSLCA generated cert.
+        </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+  <xsd:complexType name="FormatInfoType">
+    <xsd:annotation>
+      <xsd:documentation>
+        Top-level tag for describing an SSLCA generated cert format.
+      </xsd:documentation>
+    </xsd:annotation>
+    <xsd:choice minOccurs="1" maxOccurs="unbounded">
+      <xsd:group ref="py:genshiElements"/>
+      <xsd:element name="Group" type="SSLCAFormatGroupType"/>
+      <xsd:element name="Client" type="SSLCAFormatGroupType"/>
+      <xsd:element name="Format" type="FormatType"/>
+    </xsd:choice>
+  </xsd:complexType>
+
+  <xsd:element name="FormatInfo" type="FormatInfoType"/>
+</xsd:schema>
