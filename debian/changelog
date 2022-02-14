@@ -1,3 +1,12 @@
+bcfg2 (1.4.0pre2-0.1+spline5) unstable; urgency=medium
+
+  * SSLCA: SSLCAFormat is now a Generator
+  * SSLCA: Verify all certs
+  * SSLCA: Add generator for custom cert/key formats
+  * SSLCA: Allow to create self signed certificates
+
+ -- Alexander Sulfrian <asulfrian@zedat.fu-berlin.de>  Mon, 14 Feb 2022 19:42:09 +0100
+
 bcfg2 (1.4.0pre2-0.1+spline4) unstable; urgency=medium
 
   * debconf: Verify seen value
