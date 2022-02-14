@@ -1,16 +1,14 @@
-""" Cfg creator that creates SSL certs """
+""" Cfg generator that generates formatted SSL certs """
 
 import lxml.etree
 from Bcfg2.Utils import Executor
 from Bcfg2.Server.FileMonitor import get_fam
-from Bcfg2.Server.Plugin import PluginExecutionError
-from Bcfg2.Server.Plugins.Cfg import CfgCreationError, XMLCfgCreator, \
-    CfgCreator
+from Bcfg2.Server.Plugin import PluginExecutionError, StructFile
+from Bcfg2.Server.Plugins.Cfg import CfgCreator, CfgGenerator, get_cfg
 
 
-class CfgSSLCAFormatCreator(XMLCfgCreator):
-    """ This class acts as both a Cfg creator that creates formatted
-    SSL certs."""
+class CfgSSLCAFormatGenerator(CfgGenerator, StructFile):
+    """ This class generates formatted SSL certs and keys."""
 
     #: Different configurations for different clients/groups can be
     #: handled with Client and Group tags within pubkey.xml
@@ -20,10 +18,16 @@ class CfgSSLCAFormatCreator(XMLCfgCreator):
     __basenames__ = ['sslformat.xml']
 
     def __init__(self, fname):
-        XMLCfgCreator.__init__(self, fname)
+        CfgGenerator.__init__(self, fname, None)
+        StructFile.__init__(self, fname)
         self.cmd = Executor()
+        self.cfg = get_cfg()
 
-    def create_data(self, entry, metadata):
+    def handle_event(self, event):
+        CfgGenerator.handle_event(self, event)
+        StructFile.HandleEvent(self, event)
+
+    def get_data(self, entry, metadata):
         """ generate a new formatted cert """
         self.logger.info("Cfg: Generating formatted SSL cert for %s" %
                          self.name)
@@ -52,9 +56,9 @@ class CfgSSLCAFormatCreator(XMLCfgCreator):
                 result = self.cmd.run(cmd)
                 data += result.stdout
             else:
-                raise CfgCreationError("Cfg: Unknown SSL Cert format "
-                                       "%s for %s" % (part.tag, self.name))
-        self.write_data(data, **self.get_specificity(metadata))
+                raise PluginExecutionError(
+                    "Cfg: Unknown SSL Cert format %s for %s" %
+                    (part.tag, self.name))
         return data
 
     def _get_keyfile(self, elem, metadata):
@@ -66,8 +70,8 @@ class CfgSSLCAFormatCreator(XMLCfgCreator):
             try:
                 return eset.best_matching(metadata).name
             except PluginExecutionError:
-                raise CfgCreationError("Cfg: No SSL Key found at %s" %
-                                       keypath)
+                raise PluginExecutionError(
+                    "Cfg: No SSL Key found at %s" % keypath)
         else:
             # Get ssl key from cert creator
             certpath = elem.get("cert")
@@ -77,8 +81,9 @@ class CfgSSLCAFormatCreator(XMLCfgCreator):
                                              eset.get_handlers(metadata,
                                                                CfgCreator))
             except PluginExecutionError:
-                raise CfgCreationError("Cfg: No SSL cert creator defined "
-                                       "for %s" % certpath)
+                raise PluginExecutionError(
+                    "Cfg: No SSL cert creator defined for %s" %
+                    certpath)
 
             cert = creator.XMLMatch(metadata).find("Cert")
             return creator._get_keyfile(cert, metadata)
@@ -97,8 +102,9 @@ class CfgSSLCAFormatCreator(XMLCfgCreator):
                                              eset.get_handlers(metadata,
                                                                CfgCreator))
             except PluginExecutionError:
-                raise CfgCreationError("Cfg: No SSL Cert or cert creator "
-                                       "defined for %s" % certpath)
+                raise PluginExecutionError(
+                    "Cfg: No SSL Cert or cert creator defined for %s" %
+                    certpath)
 
             certentry = lxml.etree.Element("Path", name=certpath)
             creator.create_data(certentry, metadata)
@@ -106,8 +112,9 @@ class CfgSSLCAFormatCreator(XMLCfgCreator):
             tries = 0
             while True:
                 if tries >= 10:
-                    raise CfgCreationError("Cfg: Timed out waiting for event "
-                                           "on SSL cert at %s" % certpath)
+                    raise PluginExecutionError("Cfg: Timed out waiting for"
+                                               "event on SSL cert at %s" %
+                                               certpath)
                 get_fam().handle_events_in_interval(1)
                 try:
                     return eset.best_matching(metadata).name
