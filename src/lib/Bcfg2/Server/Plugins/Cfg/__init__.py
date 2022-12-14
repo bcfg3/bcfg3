@@ -392,7 +392,7 @@ class CfgCreator(CfgBaseFileMatcher):
                                        "for %s: %s" % (fileloc, err))
 
         try:
-            open(fileloc, 'wb').write(data)
+            open(fileloc, 'wb').write(data.encode())
             self.core.block_for_fam_events()
         except IOError:
             err = sys.exc_info()[1]
