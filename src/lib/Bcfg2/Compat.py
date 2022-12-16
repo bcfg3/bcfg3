@@ -68,17 +68,19 @@ from functools import wraps
 from base64 import b64encode as _b64encode, b64decode as _b64decode
 
 
+# the b64 encoded data are ASCII strings, but the decoded data can be
+# arbitrary bytes, which are not necessarily meaningful in the context
+# of any encoding
 @wraps(_b64encode)
 def b64encode(val, **kwargs):  # pylint: disable=C0111
     try:
         return _b64encode(val, **kwargs)
     except TypeError:
-        return _b64encode(val.encode('UTF-8'), **kwargs).decode('UTF-8')
-
+        return _b64encode(val.encode('UTF-8'), **kwargs).decode('ascii')
 
 @wraps(_b64decode)
 def b64decode(val, **kwargs):  # pylint: disable=C0111
-    return _b64decode(val.encode('UTF-8'), **kwargs).decode('UTF-8')
+    return _b64decode(val.encode('ascii'), **kwargs)
 
 
 input = input
