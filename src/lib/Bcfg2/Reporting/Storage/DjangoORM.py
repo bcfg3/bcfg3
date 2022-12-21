@@ -10,8 +10,8 @@ from lxml import etree
 import sys
 
 import django
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
-from django.db.models import FieldDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned,
+                                   FieldDoesNotExist
 from django.core.cache import cache
 
 import Bcfg2.Options
