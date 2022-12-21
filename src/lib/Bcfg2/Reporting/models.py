@@ -79,6 +79,7 @@ class Client(models.Model):
     creation = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=128,)
     current_interaction = models.ForeignKey('Interaction',
+                                            on_delete=models.CASCADE,
                                             null=True, blank=True,
                                             related_name="parent_client")
     expiration = models.DateTimeField(blank=True, null=True)
