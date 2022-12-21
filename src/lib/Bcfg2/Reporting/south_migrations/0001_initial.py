@@ -216,7 +216,7 @@ class Migration(SchemaMigration):
 
         # Adding model 'LinkEntry'
         db.create_table('Reporting_linkentry', (
-            ('pathentry_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['Reporting.PathEntry'], unique=True, primary_key=True)),
+            ('pathentry_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['Reporting.PathEntry'], unique=True, on_delete = models.CASCADE, primary_key=True)),
             ('target_path', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
             ('current_path', self.gf('django.db.models.fields.CharField')(max_length=1024, blank=True)),
         ))
@@ -224,7 +224,7 @@ class Migration(SchemaMigration):
 
         # Adding model 'DeviceEntry'
         db.create_table('Reporting_deviceentry', (
-            ('pathentry_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['Reporting.PathEntry'], unique=True, primary_key=True)),
+            ('pathentry_ptr', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['Reporting.PathEntry'], unique=True, on_delete = models.CASCADE, primary_key=True)),
             ('device_type', self.gf('django.db.models.fields.CharField')(max_length=16)),
             ('target_major', self.gf('django.db.models.fields.IntegerField')()),
             ('target_minor', self.gf('django.db.models.fields.IntegerField')()),
@@ -355,7 +355,7 @@ class Migration(SchemaMigration):
             'current_major': ('django.db.models.fields.IntegerField', [], {}),
             'current_minor': ('django.db.models.fields.IntegerField', [], {}),
             'device_type': ('django.db.models.fields.CharField', [], {'max_length': '16'}),
-            'pathentry_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['Reporting.PathEntry']", 'unique': 'True', 'primary_key': 'True'}),
+            'pathentry_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['Reporting.PathEntry']", 'unique': 'True', 'on_delete': 'models.CASCADE', 'primary_key': 'True'}),
             'target_major': ('django.db.models.fields.IntegerField', [], {}),
             'target_minor': ('django.db.models.fields.IntegerField', [], {})
         },
@@ -415,7 +415,7 @@ class Migration(SchemaMigration):
         'Reporting.linkentry': {
             'Meta': {'ordering': "('state', 'name')", 'object_name': 'LinkEntry', '_ormbases': ['Reporting.PathEntry']},
             'current_path': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'}),
-            'pathentry_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['Reporting.PathEntry']", 'unique': 'True', 'primary_key': 'True'}),
+            'pathentry_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': "orm['Reporting.PathEntry']", 'unique': 'True', 'on_delete': 'models.CASCADE', 'primary_key': 'True'}),
             'target_path': ('django.db.models.fields.CharField', [], {'max_length': '1024', 'blank': 'True'})
         },
         'Reporting.packageentry': {

@@ -395,7 +395,7 @@ class InteractionMetadata(models.Model):
     Hold extra data associated with the client and interaction
     """
 
-    interaction = models.OneToOneField(Interaction, primary_key=True, related_name='metadata')
+    interaction = models.OneToOneField(Interaction, on_delete = models.CASCADE, primary_key=True, related_name='metadata')
     profile = models.ForeignKey(Group, related_name="+", on_delete=models.CASCADE)
     groups = models.ManyToManyField(Group)
     bundles = models.ManyToManyField(Bundle)

@@ -167,7 +167,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='LinkEntry',
             fields=[
-                ('pathentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='Reporting.PathEntry')),
+                ('pathentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, on_delete = models.CASCADE, primary_key=True, serialize=False, to='Reporting.PathEntry')),
                 ('target_path', models.CharField(max_length=1024, blank=True)),
                 ('current_path', models.CharField(max_length=1024, blank=True)),
             ],
@@ -180,7 +180,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='DeviceEntry',
             fields=[
-                ('pathentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='Reporting.PathEntry')),
+                ('pathentry_ptr', models.OneToOneField(parent_link=True, auto_created=True, on_delete = models.CASCADE, primary_key=True, serialize=False, to='Reporting.PathEntry')),
                 ('device_type', models.CharField(max_length=16, choices=[(b'block', b'Block'), (b'char', b'Char'), (b'fifo', b'Fifo')])),
                 ('target_major', models.IntegerField()),
                 ('target_minor', models.IntegerField()),
