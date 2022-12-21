@@ -120,72 +120,72 @@ class Migration(SchemaMigration):
         # Adding M2M table for field sebooleans on 'Interaction'
         db.create_table('Reporting_interaction_sebooleans', (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('interaction', models.ForeignKey(orm['Reporting.interaction'], null=False)),
-            ('sebooleanentry', models.ForeignKey(orm['Reporting.sebooleanentry'], null=False))
+            ('interaction', models.ForeignKey(orm['Reporting.interaction'], null=False, on_delete=models.CASCADE)),
+            ('sebooleanentry', models.ForeignKey(orm['Reporting.sebooleanentry'], null=False, on_delete=models.CASCADE))
         ))
         db.create_unique('Reporting_interaction_sebooleans', ['interaction_id', 'sebooleanentry_id'])
 
         # Adding M2M table for field seports on 'Interaction'
         db.create_table('Reporting_interaction_seports', (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('interaction', models.ForeignKey(orm['Reporting.interaction'], null=False)),
-            ('seportentry', models.ForeignKey(orm['Reporting.seportentry'], null=False))
+            ('interaction', models.ForeignKey(orm['Reporting.interaction'], null=False, on_delete=models.CASCADE)),
+            ('seportentry', models.ForeignKey(orm['Reporting.seportentry'], null=False, on_delete=models.CASCADE))
         ))
         db.create_unique('Reporting_interaction_seports', ['interaction_id', 'seportentry_id'])
 
         # Adding M2M table for field sefcontexts on 'Interaction'
         db.create_table('Reporting_interaction_sefcontexts', (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('interaction', models.ForeignKey(orm['Reporting.interaction'], null=False)),
-            ('sefcontextentry', models.ForeignKey(orm['Reporting.sefcontextentry'], null=False))
+            ('interaction', models.ForeignKey(orm['Reporting.interaction'], null=False, on_delete=models.CASCADE)),
+            ('sefcontextentry', models.ForeignKey(orm['Reporting.sefcontextentry'], null=False, on_delete=models.CASCADE))
         ))
         db.create_unique('Reporting_interaction_sefcontexts', ['interaction_id', 'sefcontextentry_id'])
 
         # Adding M2M table for field senodes on 'Interaction'
         db.create_table('Reporting_interaction_senodes', (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('interaction', models.ForeignKey(orm['Reporting.interaction'], null=False)),
-            ('senodeentry', models.ForeignKey(orm['Reporting.senodeentry'], null=False))
+            ('interaction', models.ForeignKey(orm['Reporting.interaction'], null=False, on_delete=models.CASCADE)),
+            ('senodeentry', models.ForeignKey(orm['Reporting.senodeentry'], null=False, on_delete=models.CASCADE))
         ))
         db.create_unique('Reporting_interaction_senodes', ['interaction_id', 'senodeentry_id'])
 
         # Adding M2M table for field selogins on 'Interaction'
         db.create_table('Reporting_interaction_selogins', (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('interaction', models.ForeignKey(orm['Reporting.interaction'], null=False)),
-            ('seloginentry', models.ForeignKey(orm['Reporting.seloginentry'], null=False))
+            ('interaction', models.ForeignKey(orm['Reporting.interaction'], null=False, on_delete=models.CASCADE)),
+            ('seloginentry', models.ForeignKey(orm['Reporting.seloginentry'], null=False, on_delete=models.CASCADE))
         ))
         db.create_unique('Reporting_interaction_selogins', ['interaction_id', 'seloginentry_id'])
 
         # Adding M2M table for field seusers on 'Interaction'
         db.create_table('Reporting_interaction_seusers', (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('interaction', models.ForeignKey(orm['Reporting.interaction'], null=False)),
-            ('seuserentry', models.ForeignKey(orm['Reporting.seuserentry'], null=False))
+            ('interaction', models.ForeignKey(orm['Reporting.interaction'], null=False, on_delete=models.CASCADE)),
+            ('seuserentry', models.ForeignKey(orm['Reporting.seuserentry'], null=False, on_delete=models.CASCADE))
         ))
         db.create_unique('Reporting_interaction_seusers', ['interaction_id', 'seuserentry_id'])
 
         # Adding M2M table for field seinterfaces on 'Interaction'
         db.create_table('Reporting_interaction_seinterfaces', (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('interaction', models.ForeignKey(orm['Reporting.interaction'], null=False)),
-            ('seinterfaceentry', models.ForeignKey(orm['Reporting.seinterfaceentry'], null=False))
+            ('interaction', models.ForeignKey(orm['Reporting.interaction'], null=False, on_delete=models.CASCADE)),
+            ('seinterfaceentry', models.ForeignKey(orm['Reporting.seinterfaceentry'], null=False, on_delete=models.CASCADE))
         ))
         db.create_unique('Reporting_interaction_seinterfaces', ['interaction_id', 'seinterfaceentry_id'])
 
         # Adding M2M table for field sepermissives on 'Interaction'
         db.create_table('Reporting_interaction_sepermissives', (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('interaction', models.ForeignKey(orm['Reporting.interaction'], null=False)),
-            ('sepermissiveentry', models.ForeignKey(orm['Reporting.sepermissiveentry'], null=False))
+            ('interaction', models.ForeignKey(orm['Reporting.interaction'], null=False, on_delete=models.CASCADE)),
+            ('sepermissiveentry', models.ForeignKey(orm['Reporting.sepermissiveentry'], null=False, on_delete=models.CASCADE))
         ))
         db.create_unique('Reporting_interaction_sepermissives', ['interaction_id', 'sepermissiveentry_id'])
 
         # Adding M2M table for field semodules on 'Interaction'
         db.create_table('Reporting_interaction_semodules', (
             ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
-            ('interaction', models.ForeignKey(orm['Reporting.interaction'], null=False)),
-            ('semoduleentry', models.ForeignKey(orm['Reporting.semoduleentry'], null=False))
+            ('interaction', models.ForeignKey(orm['Reporting.interaction'], null=False, on_delete=models.CASCADE)),
+            ('semoduleentry', models.ForeignKey(orm['Reporting.semoduleentry'], null=False, on_delete=models.CASCADE))
         ))
         db.create_unique('Reporting_interaction_semodules', ['interaction_id', 'semoduleentry_id'])
 
@@ -265,7 +265,7 @@ class Migration(SchemaMigration):
         'Reporting.client': {
             'Meta': {'object_name': 'Client'},
             'creation': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'current_interaction': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'parent_client'", 'null': 'True', 'to': "orm['Reporting.Interaction']"}),
+            'current_interaction': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'parent_client'", 'on_delete': 'models.CASCADE', 'null': 'True', 'to': "orm['Reporting.Interaction']"}),
             'expiration': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128'})
@@ -315,7 +315,7 @@ class Migration(SchemaMigration):
             'actions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['Reporting.ActionEntry']", 'symmetrical': 'False'}),
             'bad_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'bundles': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['Reporting.Bundle']", 'symmetrical': 'False'}),
-            'client': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'interactions'", 'to': "orm['Reporting.Client']"}),
+            'client': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'interactions'", 'on_delete': 'models.CASCADE', 'to': "orm['Reporting.Client']"}),
             'extra_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'failures': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['Reporting.FailureEntry']", 'symmetrical': 'False'}),
             'good_count': ('django.db.models.fields.IntegerField', [], {}),
@@ -324,7 +324,7 @@ class Migration(SchemaMigration):
             'modified_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'packages': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['Reporting.PackageEntry']", 'symmetrical': 'False'}),
             'paths': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['Reporting.PathEntry']", 'symmetrical': 'False'}),
-            'profile': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'null': 'True', 'to': "orm['Reporting.Group']"}),
+            'profile': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'on_delete': 'models.CASCADE', 'null': 'True', 'to': "orm['Reporting.Group']"}),
             'repo_rev_code': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
             'sebooleans': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['Reporting.SEBooleanEntry']", 'symmetrical': 'False'}),
             'sefcontexts': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['Reporting.SEFcontextEntry']", 'symmetrical': 'False'}),
@@ -361,7 +361,7 @@ class Migration(SchemaMigration):
         'Reporting.pathentry': {
             'Meta': {'ordering': "('state', 'name')", 'object_name': 'PathEntry'},
             'acls': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['Reporting.FileAcl']", 'symmetrical': 'False'}),
-            'current_perms': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'to': "orm['Reporting.FilePerms']"}),
+            'current_perms': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'on_delete': 'models.CASCADE', 'to': "orm['Reporting.FilePerms']"}),
             'detail_type': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'details': ('django.db.models.fields.TextField', [], {'default': "''"}),
             'exists': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
@@ -370,12 +370,12 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_index': 'True'}),
             'path_type': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'state': ('django.db.models.fields.IntegerField', [], {}),
-            'target_perms': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'to': "orm['Reporting.FilePerms']"})
+            'target_perms': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'on_delete': 'models.CASCADE', 'to': "orm['Reporting.FilePerms']"})
         },
         'Reporting.performance': {
             'Meta': {'object_name': 'Performance'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'interaction': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'performance_items'", 'to': "orm['Reporting.Interaction']"}),
+            'interaction': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'performance_items'", 'on_delete': 'models.CASCADE', 'to': "orm['Reporting.Interaction']"}),
             'metric': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'value': ('django.db.models.fields.DecimalField', [], {'max_digits': '32', 'decimal_places': '16'})
         },

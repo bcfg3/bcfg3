@@ -118,7 +118,7 @@ class Migration(migrations.Migration):
                 ('extra_count', models.IntegerField(default=0)),
                 ('actions', models.ManyToManyField(to='Reporting.ActionEntry')),
                 ('bundles', models.ManyToManyField(to='Reporting.Bundle')),
-                ('client', models.ForeignKey(related_name='interactions', to='Reporting.Client')),
+                ('client', models.ForeignKey(on_delete=models.CASCADE, related_name='interactions', to='Reporting.Client')),
                 ('failures', models.ManyToManyField(to='Reporting.FailureEntry')),
                 ('groups', models.ManyToManyField(to='Reporting.Group')),
             ],
@@ -199,7 +199,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('metric', models.CharField(max_length=128)),
                 ('value', models.DecimalField(max_digits=32, decimal_places=16)),
-                ('interaction', models.ForeignKey(related_name='performance_items', to='Reporting.Interaction')),
+                ('interaction', models.ForeignKey(on_delete=models.CASCADE, related_name='performance_items', to='Reporting.Interaction')),
             ],
             options={
             },
@@ -231,13 +231,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='pathentry',
             name='current_perms',
-            field=models.ForeignKey(related_name='+', to='Reporting.FilePerms'),
+            field=models.ForeignKey(on_delete=models.CASCADE, related_name='+', to='Reporting.FilePerms'),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='pathentry',
             name='target_perms',
-            field=models.ForeignKey(related_name='+', to='Reporting.FilePerms'),
+            field=models.ForeignKey(on_delete=models.CASCADE, related_name='+', to='Reporting.FilePerms'),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -255,7 +255,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='interaction',
             name='profile',
-            field=models.ForeignKey(related_name='+', to='Reporting.Group'),
+            field=models.ForeignKey(on_delete=models.CASCADE, related_name='+', to='Reporting.Group'),
             preserve_default=True,
         ),
         migrations.AddField(
@@ -275,7 +275,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='client',
             name='current_interaction',
-            field=models.ForeignKey(related_name='parent_client', blank=True, to='Reporting.Interaction', null=True),
+            field=models.ForeignKey(on_delete=models.CASCADE, related_name='parent_client', blank=True, to='Reporting.Interaction', null=True),
             preserve_default=True,
         ),
     ]

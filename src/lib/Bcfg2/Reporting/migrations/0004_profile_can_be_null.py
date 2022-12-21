@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='interaction',
             name='profile',
-            field=models.ForeignKey(related_name='+', to='Reporting.Group', null=True),
+            field=models.ForeignKey(on_delete=models.CASCADE, related_name='+', to='Reporting.Group', null=True),
             preserve_default=True,
         ),
     ]

@@ -140,7 +140,8 @@ class InteractionManager(models.Manager):
 class Interaction(models.Model):
     """ Models each reconfiguration operation interaction between
     client and server. """
-    client = models.ForeignKey(Client, related_name="interactions")
+    client = models.ForeignKey(Client, on_delete=models.CASCADE,
+                               related_name="interactions")
     timestamp = models.DateTimeField(db_index=True)  # Timestamp for this record
     state = models.CharField(max_length=32)  # good/bad/modified/etc
     repo_rev_code = models.CharField(max_length=64)  # repo revision at time of interaction
@@ -179,7 +180,8 @@ class Interaction(models.Model):
                    'posixgroups', 'confs')
 
     # Formerly InteractionMetadata
-    profile = models.ForeignKey("Group", related_name="+", null=True)
+    profile = models.ForeignKey("Group", on_delete=models.CASCADE,
+                                related_name="+", null=True)
     groups = models.ManyToManyField("Group")
     bundles = models.ManyToManyField("Bundle")
 
@@ -275,7 +277,7 @@ class Interaction(models.Model):
 
 class Performance(models.Model):
     """Object representing performance data for any interaction."""
-    interaction = models.ForeignKey(Interaction,
+    interaction = models.ForeignKey(Interaction, on_delete=models.CASCADE,
                                     related_name="performance_items")
     metric = models.CharField(max_length=128)
     value = models.DecimalField(max_digits=32, decimal_places=16)
@@ -734,8 +736,10 @@ class PathEntry(SuccessEntry):
 
     path_type = models.CharField(max_length=128, choices=PATH_TYPES)
 
-    target_perms = models.ForeignKey(FilePerms, related_name="+")
-    current_perms = models.ForeignKey(FilePerms, related_name="+")
+    target_perms = models.ForeignKey(FilePerms, on_delete=models.CASCADE,
+                                     related_name="+")
+    current_perms = models.ForeignKey(FilePerms, on_delete=models.CASCADE,
+                                     related_name="+")
 
     acls = models.ManyToManyField(FileAcl)
 

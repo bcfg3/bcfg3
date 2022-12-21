@@ -73,7 +73,8 @@ class Client(models.Model):
     """Object representing every client we have seen stats for."""
     creation = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=128,)
-    current_interaction = models.ForeignKey('Interaction',
+    current_interaction = models.ForeignKey('Interaction', 
+                                            on_delete=models.CASCADE,
                                             null=True, blank=True,
                                             related_name="parent_client")
     expiration = models.DateTimeField(blank=True, null=True)
@@ -144,7 +145,8 @@ class InteractiveManager(models.Manager):
 class Interaction(models.Model):
     """Models each reconfiguration operation
     interaction between client and server."""
-    client = models.ForeignKey(Client, related_name="interactions")
+    client = models.ForeignKey(Client, on_delete=models.CASCADE,
+                               related_name="interactions")
     timestamp = models.DateTimeField(db_index=True)  # record timestamp
     state = models.CharField(max_length=32)  # good/bad/modified/etc
     # repository revision at the time of the latest interaction
@@ -326,9 +328,9 @@ class Entries(models.Model):
 
 class Entries_interactions(models.Model):
     """Define the relation between the reason, the interaction and the entry."""
-    entry = models.ForeignKey(Entries)
-    reason = models.ForeignKey(Reason)
-    interaction = models.ForeignKey(Interaction)
+    entry = models.ForeignKey(Entries, on_delete=models.CASCADE)
+    reason = models.ForeignKey(Reason, on_delete=models.CASCADE)
+    interaction = models.ForeignKey(Interaction, on_delete=models.CASCADE)
     type = models.IntegerField(choices=TYPE_CHOICES)
 
 
@@ -394,6 +396,6 @@ class InteractionMetadata(models.Model):
     """
 
     interaction = models.OneToOneField(Interaction, primary_key=True, related_name='metadata')
-    profile = models.ForeignKey(Group, related_name="+")
+    profile = models.ForeignKey(Group, related_name="+", on_delete=models.CASCADE)
     groups = models.ManyToManyField(Group)
     bundles = models.ManyToManyField(Bundle)

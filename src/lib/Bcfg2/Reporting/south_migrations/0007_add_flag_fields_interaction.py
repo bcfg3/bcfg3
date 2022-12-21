@@ -46,7 +46,7 @@ class Migration(SchemaMigration):
         'Reporting.client': {
             'Meta': {'object_name': 'Client'},
             'creation': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'current_interaction': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'parent_client'", 'null': 'True', 'to': "orm['Reporting.Interaction']"}),
+            'current_interaction': ('django.db.models.fields.related.ForeignKey', [], {'blank': 'True', 'related_name': "'parent_client'", 'on_delete': 'models.CASCADE', 'null': 'True', 'to': "orm['Reporting.Interaction']"}),
             'expiration': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128'})
@@ -96,7 +96,7 @@ class Migration(SchemaMigration):
             'actions': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['Reporting.ActionEntry']", 'symmetrical': 'False'}),
             'bad_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'bundles': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['Reporting.Bundle']", 'symmetrical': 'False'}),
-            'client': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'interactions'", 'to': "orm['Reporting.Client']"}),
+            'client': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'interactions'", 'on_delete': 'models.CASCADE', 'to': "orm['Reporting.Client']"}),
             'dry_run': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'extra_count': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'failures': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['Reporting.FailureEntry']", 'symmetrical': 'False'}),
@@ -109,7 +109,7 @@ class Migration(SchemaMigration):
             'paths': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['Reporting.PathEntry']", 'symmetrical': 'False'}),
             'posixgroups': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['Reporting.POSIXGroupEntry']", 'symmetrical': 'False'}),
             'posixusers': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['Reporting.POSIXUserEntry']", 'symmetrical': 'False'}),
-            'profile': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'null': 'True', 'to': "orm['Reporting.Group']"}),
+            'profile': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'on_delete': 'models.CASCADE', 'null': 'True', 'to': "orm['Reporting.Group']"}),
             'repo_rev_code': ('django.db.models.fields.CharField', [], {'max_length': '64'}),
             'sebooleans': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['Reporting.SEBooleanEntry']", 'symmetrical': 'False'}),
             'sefcontexts': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['Reporting.SEFcontextEntry']", 'symmetrical': 'False'}),
@@ -146,7 +146,7 @@ class Migration(SchemaMigration):
         'Reporting.pathentry': {
             'Meta': {'ordering': "('state', 'name')", 'object_name': 'PathEntry'},
             'acls': ('django.db.models.fields.related.ManyToManyField', [], {'to': "orm['Reporting.FileAcl']", 'symmetrical': 'False'}),
-            'current_perms': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'to': "orm['Reporting.FilePerms']"}),
+            'current_perms': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'on_delete': 'models.CASCADE', 'to': "orm['Reporting.FilePerms']"}),
             'detail_type': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             'details': ('django.db.models.fields.TextField', [], {'default': "''"}),
             'exists': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
@@ -155,12 +155,12 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '128', 'db_index': 'True'}),
             'path_type': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'state': ('django.db.models.fields.IntegerField', [], {}),
-            'target_perms': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'to': "orm['Reporting.FilePerms']"})
+            'target_perms': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'+'", 'on_delete': 'models.CASCADE', 'to': "orm['Reporting.FilePerms']"})
         },
         'Reporting.performance': {
             'Meta': {'object_name': 'Performance'},
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'interaction': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'performance_items'", 'to': "orm['Reporting.Interaction']"}),
+            'interaction': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'performance_items'", 'on_delete': 'models.CASCADE', 'to': "orm['Reporting.Interaction']"}),
             'metric': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'value': ('django.db.models.fields.DecimalField', [], {'max_digits': '32', 'decimal_places': '16'})
         },
