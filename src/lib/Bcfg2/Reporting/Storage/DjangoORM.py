@@ -214,7 +214,7 @@ class DjangoORM(StorageBase):
                 cdata = entry.get('current_bfile')
             elif entry.get('current_bdiff', None):
                 act_dict['detail_type'] = PathEntry.DETAIL_DIFF
-                cdata = b64decode(entry.get('current_bdiff'))
+                cdata = b64decode(entry.get('current_bdiff')).decode('utf-8')
             elif entry.get('current_diff', None):
                 act_dict['detail_type'] = PathEntry.DETAIL_DIFF
                 cdata = entry.get('current_bdiff')
