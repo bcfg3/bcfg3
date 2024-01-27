@@ -15,8 +15,7 @@ except NameError:
 inst_reqs = [
     'lockfile',
     'lxml',
-    'python-daemon',
-    'argparse'
+    'python-daemon'
 ]
 
 # Use the backported ssl module on < python2.6

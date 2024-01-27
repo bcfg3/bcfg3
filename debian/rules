@@ -1,12 +1,7 @@
 #!/usr/bin/make -f
 
-# Lucid does not have dh_python2, but we would like to be able to use
-# this rules file to build on lucid as well.
-WITH_PYTHON2 = $(shell test -f /usr/bin/dh_python2 && echo "--with python2")
-WITH_SPHINXDOC = $(shell test -f /usr/bin/dh_sphinxdoc && echo "--with sphinxdoc")
-
 %:
-	dh $@ ${WITH_PYTHON2} ${WITH_SPHINXDOC}
+	dh $@ --with python3 --buildsystem=pybuild
 
 override_dh_installinit:
 	# Install bcfg2 initscript without starting it on postinst
@@ -18,7 +13,6 @@ override_dh_installinit:
 
 override_dh_auto_build:
 	dh_auto_build
-	python setup.py build_sphinx
 
 override_dh_auto_clean:
 	dh_auto_clean
@@ -27,3 +21,5 @@ override_dh_auto_clean:
 override_dh_auto_install:
 	dh_auto_install
 	install -m 644 -D tools/bcfg2-completion.bash debian/tmp/etc/bash_completion.d/bcfg2
+
+override_dh_installdocs:
