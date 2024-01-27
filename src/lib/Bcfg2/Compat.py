@@ -124,7 +124,7 @@ except NameError:
     from functools import reduce
 
 try:
-    from collections import MutableMapping
+    from collections.abc import MutableMapping
 except ImportError:
     from UserDict import DictMixin as MutableMapping
 
