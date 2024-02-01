@@ -190,12 +190,12 @@ class Tool(object):
         :returns: dict - A dict of the state of entries suitable for
                   updating :attr:`Bcfg2.Client.Client.states`
         """
-        if not structures:
-            structures = self.config.getchildren()
+        if structures is None:
+            structures = self.config
         mods = self.buildModlist()
         states = dict()
         for struct in structures:
-            for entry in struct.getchildren():
+            for entry in struct:
                 if self.canVerify(entry):
                     try:
                         func = getattr(self, "Verify%s" % entry.tag)
@@ -261,8 +261,8 @@ class Tool(object):
 
         :returns: list of lxml.etree._Element """
         rv = []
-        for struct in self.config.getchildren():
-            rv.extend([entry for entry in struct.getchildren()
+        for struct in self.config:
+            rv.extend([entry for entry in struct
                        if self.handlesEntry(entry)])
         return rv
 
@@ -282,8 +282,8 @@ class Tool(object):
 
         :returns: list of lxml.etree._Element """
         rv = []
-        for struct in self.config.getchildren():
-            rv.extend([entry.get('name') for entry in struct.getchildren()
+        for struct in self.config:
+            rv.extend([entry.get('name') for entry in struct
                        if entry.tag == 'Path'])
         return rv
 

@@ -399,7 +399,7 @@ class Client(object):
 
         if Bcfg2.Options.setup.bundle_quick:
             newconfig = XML.XML('<Configuration/>')
-            for bundle in self.config.getchildren():
+            for bundle in self.config:
                 name = bundle.get("name")
                 if (name and (name in Bcfg2.Options.setup.only_bundles or
                               name not in Bcfg2.Options.setup.except_bundles)):
@@ -612,8 +612,8 @@ class Client(object):
 
         """
         # initialize all states
-        for struct in self.config.getchildren():
-            for entry in struct.getchildren():
+        for struct in self.config:
+            for entry in struct:
                 self.states[entry] = False
         for tool in self.tools:
             try:
@@ -665,7 +665,7 @@ class Client(object):
         # first perform bundle filtering
         all_bundle_names = [b.get('name')
                             for b in self.config.findall('./Bundle')]
-        bundles = self.config.getchildren()
+        bundles = self.config
         if Bcfg2.Options.setup.only_bundles:
             # warn if non-existent bundle given
             for bundle in Bcfg2.Options.setup.only_bundles:

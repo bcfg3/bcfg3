@@ -21,8 +21,8 @@ class POSIXNonexistent(POSIXTool):
         recursive = entry.get('recursive', '').lower() == 'true'
         if recursive:
             # ensure that configuration spec is consistent first
-            for struct in self.config.getchildren():
-                for el in struct.getchildren():
+            for struct in self.config:
+                for el in struct:
                     if (el.tag == 'Path' and
                             el.get('type') != 'nonexistent' and
                             el.get('name').startswith(ename)):

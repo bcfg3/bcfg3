@@ -21,7 +21,9 @@ except ImportError:
 version = sys.version_info[:2]
 has_py26 = version >= (2, 6)
 has_py32 = version >= (3, 2)
+has_py34 = version >= (3, 4)
 has_py36 = version >= (3, 6)
+has_py310 = version >= (3, 10)
 
 __all__ = ["ComponentProxy",
            "RetryMethod",
@@ -200,8 +202,12 @@ class SSLHTTPConnection(httplib.HTTPConnection):
         elif self.protocol == 'xmlrpc/tlsv1':
             ssl_protocol_ver = ssl.PROTOCOL_TLSv1
         elif self.protocol == 'xmlrpc/tls':
-            if has_py36:
+            if has_py310:
+                ssl_protocol_ver = ssl.PROTOCOL_TLS_SERVER
+            elif has_py36:
                 ssl_protocol_ver = ssl.PROTOCOL_TLS
+            elif has_py34:
+                ssl_protocol_ver = ssl.PROTOCOL_TLSv1_2
             else:
                 self.logger.warning("Cannot use PROTOCOL_TLS, due to "
                                     "python version. Switching to "
@@ -229,9 +235,9 @@ class SSLHTTPConnection(httplib.HTTPConnection):
 
         rawsock.settimeout(self.timeout)
         self.sock = ssl.wrap_socket(rawsock, cert_reqs=other_side_required,
-                                  ca_certs=self.ca, suppress_ragged_eofs=True,
-                                  keyfile=self.key, certfile=self.cert,
-                                  ssl_version=ssl_protocol_ver)
+                                    ca_certs=self.ca, suppress_ragged_eofs=True,
+                                    keyfile=self.key, certfile=self.cert,
+                                    ssl_version=ssl_protocol_ver)
         self.sock.connect((self.host, self.port))
         peer_cert = self.sock.getpeercert()
         if peer_cert and self.scns:

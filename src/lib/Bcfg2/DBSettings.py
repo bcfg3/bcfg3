@@ -64,14 +64,14 @@ settings = dict(
         }
     })
 
-if HAS_DJANGO and django.VERSION[0] == 1 and django.VERSION[1] >= 6:
+if HAS_DJANGO and django.VERSION >= (1, 6):
     settings['MIDDLEWARE_CLASSES'] += \
         ('django.contrib.admindocs.middleware.XViewMiddleware',)
 elif HAS_SOUTH:
     settings['MIDDLEWARE_CLASSES'] += \
         ('django.middleware.doc.XViewMiddleware',)
 
-if HAS_DJANGO and django.VERSION[0] == 1 and django.VERSION[1] >= 7:
+if HAS_DJANGO and django.VERSION >= (1, 7):
     settings['INSTALLED_APPS'] += ('Bcfg2.Reporting',)
 elif HAS_SOUTH:
     settings['INSTALLED_APPS'] += ('south', 'Bcfg2.Reporting')
@@ -79,7 +79,7 @@ elif HAS_SOUTH:
         'Reporting': 'Bcfg2.Reporting.south_migrations',
         'Server': 'Bcfg2.Server.south_migrations',
     }
-if HAS_DJANGO and django.VERSION[0] == 1 and django.VERSION[1] >= 8:
+if HAS_DJANGO and django.VERSION >= (1, 8):
     settings['TEMPLATES'] = [{
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
@@ -164,7 +164,7 @@ def finalize_django_config(opts=None, silent=False):
         setattr(module, name, value)
     try:
         django.conf.settings.configure(**settings)
-        if django.VERSION[0] == 1 and django.VERSION[1] >= 7:
+        if django.VERSION >= (1, 7):
             django.setup()  # pylint: disable=E1101
     except RuntimeError:
         if not silent:
@@ -174,7 +174,7 @@ def finalize_django_config(opts=None, silent=False):
 
 def sync_databases(**kwargs):
     """ Synchronize all databases that we know about.  """
-    if django.VERSION[0] == 1 and django.VERSION[1] >= 7:
+    if django.VERSION >= (1, 7):
         # Nothing needed here, it's all handled with migrate
         return
 
@@ -226,7 +226,7 @@ def migrate_databases(**kwargs):
     logger = logging.getLogger()
     for database in settings['DATABASES']:
         logger.debug("Migrating database %s" % (database))
-        if django.VERSION[0] == 1 and django.VERSION[1] >= 7:
+        if django.VERSION >= (1, 7):
             if initial_django_migration(database):
                 logger.warning(
                     "No applied django migrations found for database %s. "
@@ -270,6 +270,9 @@ class PerApplicationRouter(object):
         """ Called when Django wants to determine what relations to allow. Only
         allow relations within an app """
         # pylint: disable=W0212
+        if obj1._meta.app_label in ('sites', 'contenttypes', 'auth'):
+            return True
+
         return obj1._meta.app_label == obj2._meta.app_label
         # pylint: enable=W0212
 

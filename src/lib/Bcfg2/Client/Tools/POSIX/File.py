@@ -5,9 +5,10 @@ import sys
 import stat
 import difflib
 import tempfile
+from base64 import b64encode, b64decode
+
 import Bcfg2.Options
 from Bcfg2.Client.Tools.POSIX.base import POSIXTool
-from Bcfg2.Compat import unicode, b64encode, b64decode  # pylint: disable=W0622
 import Bcfg2.Utils
 
 
@@ -22,27 +23,23 @@ class POSIXFile(POSIXTool):
         """ Get a tuple of (<file data>, <is binary>) for the given entry """
         is_binary = entry.get('encoding', 'ascii') == 'base64'
         if entry.get('empty', 'false') == 'true' or not entry.text:
-            tempdata = ''
+            tempdata = b''
         elif is_binary:
-            tempdata = b64decode(entry.text)
+            tempdata = b64decode(entry.text.encode('ascii'))
         else:
             tempdata = entry.text
-            if isinstance(tempdata, unicode) and unicode != str:
-                try:
-                    tempdata = tempdata.encode(Bcfg2.Options.setup.encoding)
-                except UnicodeEncodeError:
-                    err = sys.exc_info()[1]
-                    self.logger.error("POSIX: Error encoding file %s: %s" %
-                                      (entry.get('name'), err))
+            try:
+                tempdata = tempdata.encode(Bcfg2.Options.setup.encoding)
+            except UnicodeEncodeError:
+                err = sys.exc_info()[1]
+                self.logger.error("POSIX: Error encoding file %s: %s" %
+                                  (entry.get('name'), err))
         return (tempdata, is_binary)
 
     def verify(self, entry, modlist):
         ondisk = self._exists(entry)
         tempdata, is_binary = self._get_data(entry)
-        if isinstance(tempdata, str) and str != unicode:
-            tempdatasize = len(tempdata)
-        else:
-            tempdatasize = len(tempdata.encode(Bcfg2.Options.setup.encoding))
+        tempdatasize = len(tempdata)
 
         different = False
         content = None
@@ -50,7 +47,7 @@ class POSIXFile(POSIXTool):
             # first, see if the target file exists at all; if not,
             # they're clearly different
             different = True
-            content = ""
+            content = b''
         elif tempdatasize != ondisk[stat.ST_SIZE]:
             # next, see if the size of the target file is different
             # from the size of the desired content
@@ -61,10 +58,7 @@ class POSIXFile(POSIXTool):
             # which might be faster for big binary files, but slower
             # for everything else
             try:
-                content = open(entry.get('name')).read()
-            except UnicodeDecodeError:
-                content = open(entry.get('name'),
-                               encoding=Bcfg2.Options.setup.encoding).read()
+                content = open(entry.get('name'), 'rb').read()
             except IOError:
                 self.logger.error("POSIX: Failed to read %s: %s" %
                                   (entry.get("name"), sys.exc_info()[1]))
@@ -98,11 +92,7 @@ class POSIXFile(POSIXTool):
                               (os.path.dirname(entry.get('name')), err))
             return False
         try:
-            if isinstance(filedata, str) and str != unicode:
-                os.fdopen(newfd, 'w').write(filedata)
-            else:
-                os.fdopen(newfd, 'wb').write(
-                    filedata.encode(Bcfg2.Options.setup.encoding))
+            os.fdopen(newfd, 'wb').write(filedata)
         except (OSError, IOError):
             err = sys.exc_info()[1]
             self.logger.error("POSIX: Failed to open temp file %s for writing "
@@ -159,33 +149,30 @@ class POSIXFile(POSIXTool):
             # binary, and either include that fact or the diff in our
             # prompts for -I and the reports
             try:
-                content = open(entry.get('name')).read()
-            except UnicodeDecodeError:
-                content = open(entry.get('name'), encoding='utf-8').read()
+                content = open(entry.get('name'), 'rb').read()
             except IOError:
                 self.logger.error("POSIX: Failed to read %s: %s" %
                                   (entry.get("name"), sys.exc_info()[1]))
                 return False
+
+        content_new = self._get_data(entry)[0]
         if not is_binary:
-            is_binary |= not Bcfg2.Utils.is_string(
-                content, Bcfg2.Options.setup.encoding)
+            try:
+                text_content = content.decode(Bcfg2.Options.setup.encoding)
+                text_content_new = content_new.decode(Bcfg2.Options.setup.encoding)
+            except UnicodeDecodeError:
+                is_binary = True
         if is_binary:
             # don't compute diffs if the file is binary
             prompt.append('Binary file, no printable diff')
-            attrs['current_bfile'] = b64encode(content)
+            attrs['current_bfile'] = b64encode(content).decode('ascii')
         else:
-            diff = self._diff(content, self._get_data(entry)[0],
+            diff = self._diff(text_content, text_content_new,
                               filename=entry.get("name"))
             if interactive:
                 if diff:
-                    udiff = '\n'.join(diff)
-                    if hasattr(udiff, "decode"):
-                        udiff = udiff.decode(Bcfg2.Options.setup.encoding)
-                    try:
-                        prompt.append(udiff)
-                    except UnicodeEncodeError:
-                        prompt.append("Could not encode diff")
-                elif entry.get("empty", "true"):
+                    prompt.append(diff)
+                elif entry.get("empty", 'false') == 'true':
                     # the file doesn't exist on disk, but there's no
                     # expected content
                     prompt.append("%s does not exist" % entry.get("name"))
@@ -194,9 +181,10 @@ class POSIXFile(POSIXTool):
                                   "printable diff")
             if not sensitive:
                 if diff:
-                    attrs["current_bdiff"] = b64encode("\n".join(diff))
+                    attrs["current_bdiff"] = b64encode(diff.encode(
+                        Bcfg2.Options.setup.encoding)).decode('ascii')
                 else:
-                    attrs['current_bfile'] = b64encode(content)
+                    attrs['current_bfile'] = b64encode(content).decode('ascii')
         if interactive:
             entry.set("qtext", "\n".join(prompt))
         if not sensitive:
@@ -212,7 +200,10 @@ class POSIXFile(POSIXTool):
         else:
             fromfile = ""
             tofile = ""
-        return difflib.unified_diff(content1.split('\n'),
-                                    content2.split('\n'),
-                                    fromfile=fromfile,
-                                    tofile=tofile)
+
+        diff = difflib.unified_diff(
+            content1.splitlines(True), content2.splitlines(True),
+            fromfile=fromfile, tofile=tofile)
+        if diff:
+            return ''.join(diff)
+        return None

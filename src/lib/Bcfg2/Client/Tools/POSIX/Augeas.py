@@ -217,7 +217,7 @@ class POSIXAugeas(POSIXTool):
         return self._augeas[entry.get("name")]
 
     def fully_specified(self, entry):
-        return len(entry.getchildren()) != 0
+        return len(entry) != 0
 
     def get_commands(self, entry):
         """ Get a list of commands to verify or install.

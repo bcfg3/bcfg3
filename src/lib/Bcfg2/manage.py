@@ -18,7 +18,7 @@ def main():
         Bcfg2.Options.PositionalArgument('django_command', nargs='*')])
     parser.parse()
 
-    if django.VERSION[0] == 1 and django.VERSION[1] >= 6:
+    if django.VERSION >= (1, 6):
         from django.core.management import execute_from_command_line
         execute_from_command_line(
             sys.argv[:1] + Bcfg2.Options.setup.django_command)
