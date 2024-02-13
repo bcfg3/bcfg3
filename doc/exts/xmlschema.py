@@ -807,6 +807,20 @@ class XMLDomain(Domain):
                        self.object_types[dtype].attrs['searchprio'])
 
 
+class XMLPickleWrapper(object):
+    def __init__(self, element):
+        self.element = element
+
+    def __getattr__(self, name):
+        return getattr(self.element, name)
+
+    def __getstate__(self):
+        return dict(element=lxml.etree.tostring(self.element))
+
+    def __setstate__(self, state):
+        self.element = lxml.etree.fromstring(state['element'])
+
+
 def setup(app):
     app.add_config_value('xmlschema_path', '.', False)
     app.add_config_value('xmlschema_datatype_url',
@@ -858,12 +872,12 @@ def load_xml_schemas(app):
             # schemas don't require namespaces to be identified
             # uniquely, but we let the user identify them either with
             # or without the namespace
-            entities[None]['schema'][relpath] = schema
-            entities[ns]['schema'][relpath] = schema
+            entities[None]['schema'][relpath] = XMLPickleWrapper(schema)
+            entities[ns]['schema'][relpath] = XMLPickleWrapper(schema)
             for entity in schema.xpath("//xs:*[@name]", namespaces=NSMAP):
                 tag = entity.tag[len(XS_NS):]
                 if tag in entities[ns]:
-                    entities[ns][tag][entity.get("name")] = entity
+                    entities[ns][tag][entity.get("name")] = XMLPickleWrapper(entity)
     app.builder.env.xmlschema_namespaces = namespaces
     app.builder.env.xmlschema_namespaces_by_uri = namespaces_by_uri
     app.builder.env.xmlschema_entities = entities
