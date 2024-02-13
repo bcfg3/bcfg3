@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
 %:
-	dh $@ --with python3 --buildsystem=pybuild
+	dh $@ --with python3 --buildsystem=pybuild --with-sphinxdoc
 
 override_dh_installinit:
 	# Install bcfg2 initscript without starting it on postinst
@@ -13,6 +13,7 @@ override_dh_installinit:
 
 override_dh_auto_build:
 	dh_auto_build
+	python3 setup.py build_sphinx
 
 override_dh_auto_clean:
 	dh_auto_clean
@@ -21,5 +22,3 @@ override_dh_auto_clean:
 override_dh_auto_install:
 	dh_auto_install
 	install -m 644 -D tools/bcfg2-completion.bash debian/tmp/etc/bash_completion.d/bcfg2
-
-override_dh_installdocs:
