@@ -102,6 +102,23 @@ except ImportError:
         """ implementation of functools.wraps() for python 2.4 """
         return lambda f: f
 
+# base64 compat
+if sys.hexversion >= 0x03000000:
+    from base64 import b64encode as _b64encode, b64decode as _b64decode
+
+    @wraps(_b64encode)
+    def b64encode(val, **kwargs):  # pylint: disable=C0111
+        try:
+            return _b64encode(val, **kwargs)
+        except TypeError:
+            return _b64encode(val.encode('UTF-8'), **kwargs).decode('UTF-8')
+
+    @wraps(_b64decode)
+    def b64decode(val, **kwargs):  # pylint: disable=C0111
+        return _b64decode(val.encode('UTF-8'), **kwargs).decode('UTF-8')
+else:
+    from base64 import b64encode, b64decode
+
 try:
     input = raw_input
 except NameError:
