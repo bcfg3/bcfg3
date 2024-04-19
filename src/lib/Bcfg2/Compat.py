@@ -12,64 +12,32 @@ import sys
 
 # pylint: disable=E0601,E0602,E0611,W0611,W0622,C0103
 
-try:
-    from email.Utils import formatdate
-except ImportError:
-    from email.utils import formatdate
+from email.utils import formatdate
 
 # urllib imports
-try:
-    from urllib.parse import quote_plus
-    from urllib.request import urlretrieve
-    from urllib.parse import urljoin, urlparse
-    from urllib.request import HTTPBasicAuthHandler, HTTPPasswordMgrWithDefaultRealm, build_opener, install_opener, urlopen
-    from urllib.error import HTTPError, URLError
-except ImportError:
-    from urllib.parse import urljoin, urlparse, quote_plus
-    from urllib.request import HTTPBasicAuthHandler, \
-        HTTPPasswordMgrWithDefaultRealm, build_opener, install_opener, \
-        urlopen, urlretrieve
-    from urllib.error import HTTPError, URLError
+from urllib.parse import quote_plus
+from urllib.request import urlretrieve
+from urllib.parse import urljoin, urlparse
+from urllib.request import HTTPBasicAuthHandler, HTTPPasswordMgrWithDefaultRealm, build_opener, install_opener, urlopen
+from urllib.error import HTTPError, URLError
 
-try:
-    from io import StringIO
-except ImportError:
-    from io import StringIO
+from io import StringIO
 
-try:
-    import configparser
-except ImportError:
-    import configparser as ConfigParser
+import configparser as ConfigParser
 
-try:
-    import pickle
-except ImportError:
-    import pickle as cPickle
+import pickle as cPickle
 
-try:
-    from queue import Queue, Empty, Full
-except ImportError:
-    from queue import Queue, Empty, Full
+from queue import Queue, Empty, Full
 
 # xmlrpc imports
-try:
-    import xmlrpc.client
-    import xmlrpc.server
-except ImportError:
-    import xmlrpc.client as xmlrpclib
-    import xmlrpc.server as SimpleXMLRPCServer
+import xmlrpc.client as xmlrpclib
+import xmlrpc.server as SimpleXMLRPCServer
 
 # socketserver import
-try:
-    import socketserver
-except ImportError:
-    import socketserver as SocketServer
+import socketserver as SocketServer
 
 # httplib imports
-try:
-    import http.client
-except ImportError:
-    import http.client as httplib
+import http.client as httplib
 
 try:
     str = str
@@ -94,44 +62,32 @@ def ensure_binary(string, encoding='utf-8'):
     return string
 
 
-try:
-    from functools import wraps
-except ImportError:
-    def wraps(wrapped):  # pylint: disable=W0613
-        """ implementation of functools.wraps() for python 2.4 """
-        return lambda f: f
+from functools import wraps
 
 # base64 compat
-if sys.hexversion >= 0x03000000:
-    from base64 import b64encode as _b64encode, b64decode as _b64decode
+from base64 import b64encode as _b64encode, b64decode as _b64decode
 
-    @wraps(_b64encode)
-    def b64encode(val, **kwargs):  # pylint: disable=C0111
-        try:
-            return _b64encode(val, **kwargs)
-        except TypeError:
-            return _b64encode(val.encode('UTF-8'), **kwargs).decode('UTF-8')
 
-    @wraps(_b64decode)
-    def b64decode(val, **kwargs):  # pylint: disable=C0111
-        return _b64decode(val.encode('UTF-8'), **kwargs).decode('UTF-8')
-else:
-    from base64 import b64encode, b64decode
+@wraps(_b64encode)
+def b64encode(val, **kwargs):  # pylint: disable=C0111
+    try:
+        return _b64encode(val, **kwargs)
+    except TypeError:
+        return _b64encode(val.encode('UTF-8'), **kwargs).decode('UTF-8')
 
-try:
-    input = raw_input
-except NameError:
-    input = input
 
-try:
-    reduce = reduce
-except NameError:
-    from functools import reduce
+@wraps(_b64decode)
+def b64decode(val, **kwargs):  # pylint: disable=C0111
+    return _b64decode(val.encode('UTF-8'), **kwargs).decode('UTF-8')
 
-try:
-    from collections.abc import MutableMapping
-except ImportError:
-    from UserDict import DictMixin as MutableMapping
+
+input = input
+
+
+from functools import reduce
+
+
+from collections.abc import MutableMapping
 
 
 class CmpMixin(object):
@@ -157,110 +113,15 @@ class CmpMixin(object):
     def __le__(self, other):
         return self.__lt__(other) or self.__eq__(other)
 
-try:
-    from pkgutil import walk_packages
-except ImportError:
-    try:
-        from pkgutil import iter_modules
-        # iter_modules was added in python 2.5; use it to get an exact
-        # re-implementation of walk_packages if possible
 
-        def walk_packages(path=None, prefix='', onerror=None):
-            """ Implementation of walk_packages for python 2.5 """
-            def seen(path, seenpaths={}):  # pylint: disable=W0102
-                """ detect if a path has been 'seen' (i.e., considered
-                for inclusion in the generator).  tracks what has been
-                seen through the magic of python default arguments """
-                if path in seenpaths:
-                    return True
-                seenpaths[path] = True
-
-            for importer, name, ispkg in iter_modules(path, prefix):
-                yield importer, name, ispkg
-
-                if ispkg:
-                    try:
-                        __import__(name)
-                    except ImportError:
-                        if onerror is not None:
-                            onerror(name)
-                    except Exception:
-                        if onerror is not None:
-                            onerror(name)
-                        else:
-                            raise
-                    else:
-                        path = getattr(sys.modules[name], '__path__', [])
-
-                        # don't traverse path items we've seen before
-                        path = [p for p in path if not seen(p)]
-
-                        for item in walk_packages(path, name + '.', onerror):
-                            yield item
-    except ImportError:
-        import os
-
-        def walk_packages(path=None, prefix='', onerror=None):
-            """ Imperfect, incomplete implementation of
-            :func:`pkgutil.walk_packages` for python 2.4. Differences:
-
-            * Requires a full path, not a path relative to something
-              in sys.path.  Anywhere we care about that shouldn't be
-              an issue.
-            * The first element of each tuple is None instead of an
-              importer object.
-            """
-            if path is None:
-                path = sys.path
-            for mpath in path:
-                for fname in os.listdir(mpath):
-                    fpath = os.path.join(mpath, fname)
-                    if (os.path.isfile(fpath) and fname.endswith(".py") and
-                        fname != '__init__.py'):
-                        yield None, prefix + fname[:-3], False
-                    elif os.path.isdir(fpath):
-                        mname = prefix + fname
-                        if os.path.exists(os.path.join(fpath, "__init__.py")):
-                            yield None, mname, True
-                        try:
-                            __import__(mname)
-                        except ImportError:
-                            if onerror is not None:
-                                onerror(mname)
-                        except Exception:
-                            if onerror is not None:
-                                onerror(mname)
-                            else:
-                                raise
-                        else:
-                            for item in walk_packages([fpath],
-                                                      prefix=mname + '.',
-                                                      onerror=onerror):
-                                yield item
+from pkgutil import walk_packages
 
 
-try:
-    all = all
-    any = any
-except NameError:
-    def all(iterable):
-        """ implementation of builtin all() for python 2.4 """
-        for element in iterable:
-            if not element:
-                return False
-        return True
+all = all
+any = any
 
-    def any(iterable):
-        """ implementation of builtin any() for python 2.4 """
-        for element in iterable:
-            if element:
-                return True
-        return False
 
-try:
-    from hashlib import md5
-except ImportError:
-    from md5 import md5
+from hashlib import md5
 
 
 def oct_mode(mode):
@@ -278,22 +139,12 @@ def oct_mode(mode):
     return oct(mode).replace('o', '')
 
 
-try:
-    long = int
-except NameError:
-    # longs are just ints in py3k
-    long = int
+long = int
 
 
-try:
-    cmp = cmp
-except NameError:
-    def cmp(a, b):
-        """ Py3k implementation of cmp() """
-        return (a > b) - (a < b)
+def cmp(a, b):
+    """ Py3k implementation of cmp() """
+    return (a > b) - (a < b)
 
-# ast was introduced in python 2.6
-try:
-    from ast import literal_eval
-except ImportError:
-    literal_eval = eval
+
+from ast import literal_eval
