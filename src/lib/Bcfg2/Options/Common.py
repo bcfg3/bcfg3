@@ -113,8 +113,8 @@ class Common(object):
 
     #: Communication protocol
     protocol = Option(
-        cf=('communication', 'protocol'), default='xmlrpc/tlsv1',
-        choices=['xmlrpc/ssl', 'xmlrpc/tlsv1'],
+        cf=('communication', 'protocol'), default='xmlrpc/tls',
+        choices=['xmlrpc/ssl', 'xmlrpc/tlsv1', 'xmlrpc/tls'],
         help='Communication protocol to use.')
 
     #: Default Path paranoid setting

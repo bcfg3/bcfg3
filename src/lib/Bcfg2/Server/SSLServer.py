@@ -74,7 +74,7 @@ class SSLServer(SocketServer.TCPServer, object):
 
     def __init__(self, listen_all, server_address, RequestHandlerClass,
                  keyfile=None, certfile=None, reqCert=False, ca=None,
-                 timeout=None, protocol='xmlrpc/tlsv1'):
+                 timeout=None, protocol='xmlrpc/tls'):
         """
         :param listen_all: Listen on all interfaces
         :type listen_all: bool
@@ -90,7 +90,7 @@ class SSLServer(SocketServer.TCPServer, object):
         :type ca: string
         :param timeout: Timeout for non-blocking request handling
         :param protocol: The protocol to serve.  Supported values are
-                         ``xmlrpc/ssl`` and ``xmlrpc/tlsv1``.
+                         ``xmlrpc/ssl``, ``xmlrpc/tlsv1`` and ``xmlrpc/tls``.
         :type protocol: string
         """
         # check whether or not we should listen on all interfaces
@@ -151,6 +151,8 @@ class SSLServer(SocketServer.TCPServer, object):
             self.ssl_protocol = ssl.PROTOCOL_SSLv23
         elif protocol == 'xmlrpc/tlsv1':
             self.ssl_protocol = ssl.PROTOCOL_TLSv1
+        elif protocol == 'xmlrpc/tls':
+            self.ssl_protocol = ssl.PROTOCOL_TLS_SERVER
         else:
             self.logger.error("Unknown protocol %s" % (protocol))
             raise Exception("unknown protocol %s" % protocol)
@@ -335,8 +337,8 @@ class XMLRPCServer(SocketServer.ThreadingMixIn, SSLServer,
     """ Component XMLRPCServer. """
 
     def __init__(self, listen_all, server_address, RequestHandlerClass=None,
-                 keyfile=None, certfile=None, ca=None, protocol='xmlrpc/tlsv1',
-                 timeout=10, logRequests=False,
+                 keyfile=None, certfile=None, ca=None,
+                 protocol='xmlrpc/tls', timeout=10, logRequests=False,
                  register=True, allow_none=True, encoding=None):
         """
         :param listen_all: Listen on all interfaces
