@@ -23,3 +23,6 @@ testsuite/test.sqlite
 
 # sphinx build data
 man/.doctrees
+
+# 2to3
+*.bak

@@ -13,6 +13,8 @@ import subprocess
 import threading
 from Bcfg2.Compat import input, any  # pylint: disable=W0622
 
+from typing import Optional
+
 
 class ClassName(object):
     """ This very simple descriptor class exists only to get the name
@@ -167,9 +169,6 @@ class ExecutorResult(object):
                         self.__class__.__name__)
 
     def __bool__(self):
-        return self.__bool__()
-
-    def __bool__(self):
         return self.success
 
 
@@ -200,7 +199,8 @@ class Executor(object):
             except OSError:
                 pass
 
-    def run(self, command, inputdata=None, timeout=None, **kwargs):
+    def run(self, command: list[str], inputdata: Optional[str] = None,
+            timeout: Optional[int] = None, **kwargs):
         """ Run a command, given as a list, optionally giving it the
         specified input data.  All additional keyword arguments are
         passed through to :class:`subprocess.Popen`.
@@ -241,7 +241,9 @@ class Executor(object):
             if inputdata:
                 for line in inputdata.splitlines():
                     self.logger.debug('> %s' % line)
-            (stdout, stderr) = proc.communicate(input=inputdata)
+                (stdout, stderr) = proc.communicate(input=inputdata.encode())
+            else:
+                (stdout, stderr) = proc.communicate()
 
             # py3k fixes
             if not isinstance(stdout, str):
@@ -313,12 +315,12 @@ def hostnames2ranges(hostnames):
     return ranges
 
 
-def safe_input(msg):
+def safe_input(msg: str) -> str:
     """ input() that flushes the input buffer before accepting input """
     # flush input buffer
     while len(select.select([sys.stdin.fileno()], [], [], 0.0)[0]) > 0:
         os.read(sys.stdin.fileno(), 4096)
-    return eval(input(msg))
+    return input(msg)
 
 
 def safe_module_name(prefix, module):
