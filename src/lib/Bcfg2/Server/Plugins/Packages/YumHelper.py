@@ -290,16 +290,16 @@ class HelperSubcommand(Bcfg2.Options.Subcommand):
             except ValueError:
                 self.logger.error("Error decoding JSON input: %s" %
                                   sys.exc_info()[1])
-                print(json.dumps(self.fallback))
+                print((json.dumps(self.fallback)))
                 return 2
 
         try:
-            print(json.dumps(self._run(setup, data)))
+            print((json.dumps(self._run(setup, data))))
         except:  # pylint: disable=W0702
             self.logger.error("Unexpected error running %s: %s" %
                               (self.__class__.__name__.lower(),
                                sys.exc_info()[1]), exc_info=1)
-            print(json.dumps(self.fallback))
+            print((json.dumps(self.fallback)))
             return 2
         return 0
 
@@ -388,7 +388,7 @@ class CLI(Bcfg2.Options.CommandRegistry):
 
     def __init__(self):
         Bcfg2.Options.CommandRegistry.__init__(self)
-        self.register_commands(globals().values(), parent=HelperSubcommand)
+        self.register_commands(list(globals().values()), parent=HelperSubcommand)
         parser = Bcfg2.Options.get_parser("Bcfg2 yum helper",
                                           components=[self])
         parser.add_options(self.subcommand_options)

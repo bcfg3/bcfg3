@@ -29,8 +29,8 @@ class Cfg(ServerPlugin):
         """ Check that a single entryset doesn't have multiple
         non-specific (i.e., 'all') handlers. """
         cfg = self.core.plugins['Cfg']
-        for eset in cfg.entries.values():
-            alls = [e for e in eset.entries.values()
+        for eset in list(cfg.entries.values()):
+            alls = [e for e in list(eset.entries.values())
                     if (e.specific.all and
                         issubclass(e.__class__, CfgGenerator))]
             if len(alls) > 1:
@@ -98,9 +98,9 @@ class Cfg(ServerPlugin):
 
         # next, get a list of all files known to Cfg
         cfg_files = set()
-        for root, eset in cfg.entries.items():
+        for root, eset in list(cfg.entries.items()):
             cfg_files.update(os.path.join(cfg.data, root.lstrip("/"), fname)
-                             for fname in eset.entries.keys())
+                             for fname in list(eset.entries.keys()))
 
         # finally, compare the two
         unknown_files = all_files - cfg_files

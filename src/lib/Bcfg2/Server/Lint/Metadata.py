@@ -131,7 +131,7 @@ class Metadata(ServerPlugin):
                     groups[grpname] = grp
             else:  # group has no options
                 groups[grpname] = grp
-        for grpname, grps in duplicates.items():
+        for grpname, grps in list(duplicates.items()):
             self.LintError("duplicate-group",
                            "Group %s is defined multiple times:\n%s" %
                            (grpname,
@@ -154,7 +154,7 @@ class Metadata(ServerPlugin):
                 entries[el.get("name")].append(self.RenderXML(el))
             else:
                 entries[el.get("name")] = [self.RenderXML(el)]
-        for ename, els in entries.items():
+        for ename, els in list(entries.items()):
             if len(els) > 1:
                 self.LintError("duplicate-%s" % etype,
                                "%s %s is defined multiple times:\n%s" %

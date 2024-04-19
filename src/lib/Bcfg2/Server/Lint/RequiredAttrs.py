@@ -230,7 +230,7 @@ class RequiredAttrs(Bcfg2.Server.Lint.ServerPlugin):
         if 'Rules' not in self.core.plugins:
             return
 
-        for rules in self.core.plugins['Rules'].entries.values():
+        for rules in list(self.core.plugins['Rules'].entries.values()):
             xdata = rules.pnode.data
             for path in xdata.xpath("//Path"):
                 self.check_entry(path,
@@ -243,7 +243,7 @@ class RequiredAttrs(Bcfg2.Server.Lint.ServerPlugin):
         if 'Bundler' not in self.core.plugins:
             return
 
-        for bundle in self.core.plugins['Bundler'].entries.values():
+        for bundle in list(self.core.plugins['Bundler'].entries.values()):
             if self.HandlesFile(bundle.name) and bundle.template is None:
                 for path in bundle.xdata.xpath(
                         "//*[substring(name(), 1, 5) = 'Bound']"):
@@ -327,7 +327,7 @@ class RequiredAttrs(Bcfg2.Server.Lint.ServerPlugin):
                         "Text content of %s %s in %s is malformed\n%s" %
                         (tag, name, filename, self.RenderXML(entry)))
 
-            if not attrs.issuperset(required_attrs.keys()):
+            if not attrs.issuperset(list(required_attrs.keys())):
                 self.LintError(
                     "required-attrs-missing",
                     "The following required attribute(s) are missing for %s "
@@ -338,7 +338,7 @@ class RequiredAttrs(Bcfg2.Server.Lint.ServerPlugin):
                                 set(required_attrs.keys()).difference(attrs)]),
                      self.RenderXML(entry)))
 
-            for attr, fmt in required_attrs.items():
+            for attr, fmt in list(required_attrs.items()):
                 if fmt and attr in attrs and not fmt(entry.attrib[attr]):
                     self.LintError(
                         "required-attr-format",

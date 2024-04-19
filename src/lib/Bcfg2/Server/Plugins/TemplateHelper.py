@@ -31,9 +31,9 @@ class HelperModule(Debuggable):
         self.defaults = []
 
         default_prov = DefaultTemplateDataProvider()
-        self.reserved_defaults = default_prov.get_template_data(
+        self.reserved_defaults = list(default_prov.get_template_data(
             lxml.etree.Element("Path", name="/dummy"),
-            None, None).keys() + ["path"]
+            None, None).keys()) + ["path"]
 
     def HandleEvent(self, event=None):
         """ HandleEvent is called whenever the FAM registers an event.
@@ -119,12 +119,12 @@ class TemplateHelper(Plugin, Connector, DirectoryBacked, TemplateDataProvider):
 
     def get_additional_data(self, _):
         return dict([(h._module_name, h)  # pylint: disable=W0212
-                     for h in self.entries.values()])
+                     for h in list(self.entries.values())])
 
     def get_template_data(self, *_):
         rv = dict()
         source = dict()
-        for helper in self.entries.values():
+        for helper in list(self.entries.values()):
             for key in helper.defaults:
                 if key not in rv:
                     rv[key] = getattr(helper, key)

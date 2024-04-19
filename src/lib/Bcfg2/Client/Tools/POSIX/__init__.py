@@ -31,9 +31,9 @@ class POSIX(Bcfg2.Client.Tools.Tool):
         Bcfg2.Client.Tools.Tool.__init__(self, config)
         self._handlers = self._load_handlers()
         self.logger.debug("POSIX: Handlers loaded: %s" %
-                          (", ".join(self._handlers.keys())))
+                          (", ".join(list(self._handlers.keys()))))
         self.__req__ = dict(Path=dict())
-        for etype, hdlr in self._handlers.items():
+        for etype, hdlr in list(self._handlers.items()):
             self.__req__['Path'][etype] = hdlr.__req__
             self.__handles__.append(('Path', etype))
         # Tool.__init__() sets up the list of handled entries, but we

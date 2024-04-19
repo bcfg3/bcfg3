@@ -811,7 +811,7 @@ def rpm_erase(erase_pkgspecs, erase_flags):
         idx_list = getindexbykeyword(erase_ts, **pkgspec)
         if len(idx_list) > 1 and not 'allmatches' in erase_flags:
             #pass
-            print('ERROR - Multiple package match for erase', pkgspec)
+            print(('ERROR - Multiple package match for erase', pkgspec))
         else:
             for idx in idx_list:
                 erase_ts.addErase(idx)
@@ -891,7 +891,7 @@ def display_verify_file(file_results):
         else:
             result_string = result_string + '.'
 
-    print(result_string + '  ' + filetype + ' ' + filename)
+    print((result_string + '  ' + filetype + ' ' + filename))
     sys.stdout.flush()
 
 #=============================================================================

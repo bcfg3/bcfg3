@@ -327,7 +327,7 @@ class FileMonitor(Debuggable):
         :attr:`Bcfg2.Server.FileMonitor.FileMonitor.handles` for
         debugging purposes. """
         rv = dict()
-        for watch, handler in self.handles.items():
+        for watch, handler in list(self.handles.items()):
             rv[watch] = getattr(handler, "name", handler.__class__.__name__)
         return rv
 
@@ -377,7 +377,7 @@ try:
 except ImportError:
     pass
 
-for fdrv in reversed(sorted(available.keys(),
+for fdrv in reversed(sorted(list(available.keys()),
                             key=lambda k: available[k].__priority__)):
     if fdrv in available:
         available['default'] = available[fdrv]

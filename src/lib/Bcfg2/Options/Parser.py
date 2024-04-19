@@ -175,7 +175,7 @@ class Parser(argparse.ArgumentParser):
             if not opt.args and opt.dest not in self.namespace:
                 value = opt.default
                 if value:
-                    for _, action in opt.actions.items():
+                    for _, action in list(opt.actions.items()):
                         _debug("Setting config file-only option %s to %s" %
                                (opt, value))
                         action(self, self.namespace, value)

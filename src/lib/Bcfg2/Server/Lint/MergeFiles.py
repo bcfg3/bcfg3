@@ -48,8 +48,8 @@ class MergeFiles(Bcfg2.Server.Lint.ServerPlugin):
             if not hdlr.__specific__:
                 ignore.extend(hdlr.__basenames__)
 
-        for filename, entryset in self.core.plugins['Cfg'].entries.items():
-            candidates = dict([(f, e) for f, e in entryset.entries.items()
+        for filename, entryset in list(self.core.plugins['Cfg'].entries.items()):
+            candidates = dict([(f, e) for f, e in list(entryset.entries.items())
                                if (isinstance(e, CfgGenerator) and
                                    is_string(e.data,
                                              Bcfg2.Options.setup.encoding) and

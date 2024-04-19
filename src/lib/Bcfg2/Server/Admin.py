@@ -92,8 +92,8 @@ def print_table(rows, justify='left', hdr=True, vdelim=" ", padding=1):
     # Print out the table
     print(borderline)
     for row in rows:
-        print(vdelim.join([justify(str(item), width)
-                           for (item, width) in zip(row, col_widths)]))
+        print((vdelim.join([justify(str(item), width)
+                           for (item, width) in zip(row, col_widths)])))
         if hdr:
             print(borderline)
             hdr = False
@@ -173,7 +173,7 @@ class Backup(AdminCmd):
         out = tarfile.open(os.path.join(datastore, filename), mode=mode)
         out.add(datastore, os.path.basename(datastore))
         out.close()
-        print("Archive %s was stored under %s" % (filename, datastore))
+        print(("Archive %s was stored under %s" % (filename, datastore)))
 
 
 class Client(_ServerAdminCmd):
@@ -199,8 +199,8 @@ class Client(_ServerAdminCmd):
         for i in setup.attributes:
             attr, val = i.split('=', 1)
             if attr not in self.valid_attribs:
-                print("Attribute %s unknown. Valid attributes: %s" %
-                      (attr, self.valid_attribs))
+                print(("Attribute %s unknown. Valid attributes: %s" %
+                      (attr, self.valid_attribs)))
                 raise SystemExit(1)
             attr_d[attr] = val
         return attr_d
@@ -387,7 +387,7 @@ class Compare(AdminCmd):
                 for el in bundle.getchildren():
                     elements2["%s:%s" % (el.tag, el.get("name"))] = el
 
-            for el in elements1.values():
+            for el in list(elements1.values()):
                 elid = "%s:%s" % (el.tag, el.get("name"))
                 if elid not in elements2:
                     self.removed("Element %s" % elid, host)
@@ -428,16 +428,16 @@ class Compare(AdminCmd):
                                                lines=setup.diff_lines))
                             self.changed("\n".join(err), host)
 
-            for el in elements2.values():
+            for el in list(elements2.values()):
                 elid = "%s:%s" % (el.tag, el.get("name"))
                 if elid not in elements2:
                     self.removed("Element %s" % elid, host)
 
-        for change, hosts in self.changes.items():
+        for change, hosts in list(self.changes.items()):
             hlist = [h for h in hosts if h is not None]
             if len(files) > 1 and len(hlist):
-                print("===== %s =====" %
-                      "\n      ".join(hostnames2ranges(hlist)))
+                print(("===== %s =====" %
+                      "\n      ".join(hostnames2ranges(hlist))))
             print(change)
             if len(files) > 1 and len(hlist):
                 print("")
@@ -636,7 +636,7 @@ bcfg2 = %s
             result = safe_input("\nWarning: %s already exists. "
                                 "Overwrite? [y/N]: " % self.data['configfile'])
             if result not in ['Y', 'y']:
-                print("Leaving %s unchanged" % self.data['configfile'])
+                print(("Leaving %s unchanged" % self.data['configfile']))
                 return
         try:
             open(self.data['configfile'], "w").write(confdata)
@@ -654,10 +654,10 @@ bcfg2 = %s
         try:
             os.makedirs(path)
             self._init_plugins()
-            print("Repository created successfuly in %s" %
-                  self.data['repopath'])
+            print(("Repository created successfuly in %s" %
+                  self.data['repopath']))
         except OSError:
-            print("Failed to create %s." % path)
+            print(("Failed to create %s." % path))
 
         # Create the configuration file and SSL key
         self.create_conf()
@@ -674,21 +674,21 @@ bcfg2 = %s
                        "-newkey", "rsa:2048",
                        "-keyout", self.data['keypath'], "-noout"])
         if not key.success:
-            print("Error generating key: %s" % key.error)
+            print(("Error generating key: %s" % key.error))
             return
         os.chmod(self.data['keypath'], stat.S_IRUSR | stat.S_IWUSR)  # 0600
         csr = cmd.run(["openssl", "req", "-batch", "-new", "-subj", subject,
                        "-key", self.data['keypath']])
         if not csr.success:
-            print("Error generating certificate signing request: %s" %
-                  csr.error)
+            print(("Error generating certificate signing request: %s" %
+                  csr.error))
             return
         cert = cmd.run(["openssl", "x509", "-req", "-days", "1000",
                         "-signkey", self.data['keypath'],
                         "-out", self.data['certpath']],
                        inputdata=csr.stdout)
         if not cert.success:
-            print("Error signing certificate: %s" % cert.error)
+            print(("Error signing certificate: %s" % cert.error))
             return
 
 
@@ -774,9 +774,9 @@ class Pull(_ServerAdminCmd):
                 try:
                     self.PullEntry(*line.split(None, 3))
                 except SystemExit:
-                    print("  for %s" % line)
+                    print(("  for %s" % line))
                 except:
-                    print("Bad entry: %s" % line.strip())
+                    print(("Bad entry: %s" % line.strip()))
         else:
             self.PullEntry(setup.hostname, setup.entrytype, setup.entryname)
 
@@ -818,10 +818,10 @@ class Pull(_ServerAdminCmd):
                 if choice.all:
                     print(" => global entry")
                 elif choice.group:
-                    print(" => group entry: %s (prio %d)" %
-                          (choice.group, choice.prio))
+                    print((" => group entry: %s (prio %d)" %
+                          (choice.group, choice.prio)))
                 else:
-                    print(" => host entry: %s" % (choice.hostname))
+                    print((" => host entry: %s" % (choice.hostname)))
 
                 # flush input buffer
                 ans = safe_input("Use this entry? [yN]: ") in ['y', 'Y']
@@ -979,8 +979,8 @@ if HAS_REPORTS:
                                      (start_count - cls.objects.count(),
                                       cls.__name__))
                 except:  # pylint: disable=W0702
-                    print("Failed to prune %s: %s" %
-                          (cls.__name__, sys.exc_info()[1]))
+                    print(("Failed to prune %s: %s" %
+                          (cls.__name__, sys.exc_info()[1])))
 
     class InitReports(AdminCmd):
         """ Initialize the Reporting database """
@@ -1003,8 +1003,8 @@ if HAS_REPORTS:
         """ Print Reporting database statistics """
         def run(self, _):
             for cls in self.reports_classes:
-                print("%s has %s records" % (cls.__name__,
-                                             cls.objects.count()))
+                print(("%s has %s records" % (cls.__name__,
+                                             cls.objects.count())))
 
     class PurgeReports(_ReportsCmd):
         """ Purge records from the Reporting database """
@@ -1198,7 +1198,7 @@ class Viz(_ServerAdminCmd):
         if not result.success:
             self.errExit("Error running %s: %s" % (cmd, result.error))
         if not setup.outfile:
-            print(result.stdout)
+            print((result.stdout))
 
 
 class Xcmd(_ProxyAdminCmd):
@@ -1223,7 +1223,7 @@ class CLI(Bcfg2.Options.CommandRegistry):
 
     def __init__(self):
         Bcfg2.Options.CommandRegistry.__init__(self)
-        self.register_commands(globals().values(), parent=AdminCmd)
+        self.register_commands(list(globals().values()), parent=AdminCmd)
         parser = Bcfg2.Options.get_parser(
             description="Manage a running Bcfg2 server",
             components=[self])

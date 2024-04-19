@@ -9,15 +9,15 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding model 'MetadataClientModel'
-        db.create_table(u'Server_metadataclientmodel', (
+        db.create_table('Server_metadataclientmodel', (
             ('hostname', self.gf('django.db.models.fields.CharField')(max_length=255, primary_key=True)),
             ('version', self.gf('django.db.models.fields.CharField')(max_length=31, null=True)),
         ))
         db.send_create_signal('Server', ['MetadataClientModel'])
 
         # Adding model 'ProbesDataModel'
-        db.create_table(u'Server_probesdatamodel', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+        db.create_table('Server_probesdatamodel', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('hostname', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('probe', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('timestamp', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
@@ -26,8 +26,8 @@ class Migration(SchemaMigration):
         db.send_create_signal('Server', ['ProbesDataModel'])
 
         # Adding model 'ProbesGroupsModel'
-        db.create_table(u'Server_probesgroupsmodel', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+        db.create_table('Server_probesgroupsmodel', (
+            ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('hostname', self.gf('django.db.models.fields.CharField')(max_length=255)),
             ('group', self.gf('django.db.models.fields.CharField')(max_length=255)),
         ))
@@ -36,13 +36,13 @@ class Migration(SchemaMigration):
 
     def backwards(self, orm):
         # Deleting model 'MetadataClientModel'
-        db.delete_table(u'Server_metadataclientmodel')
+        db.delete_table('Server_metadataclientmodel')
 
         # Deleting model 'ProbesDataModel'
-        db.delete_table(u'Server_probesdatamodel')
+        db.delete_table('Server_probesdatamodel')
 
         # Deleting model 'ProbesGroupsModel'
-        db.delete_table(u'Server_probesgroupsmodel')
+        db.delete_table('Server_probesgroupsmodel')
 
 
     models = {
@@ -55,7 +55,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'ProbesDataModel'},
             'data': ('django.db.models.fields.TextField', [], {'null': 'True'}),
             'hostname': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'probe': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'timestamp': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
         },
@@ -63,7 +63,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'ProbesGroupsModel'},
             'group': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'hostname': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
+            'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
         }
     }
 

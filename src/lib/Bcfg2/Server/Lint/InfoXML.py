@@ -29,11 +29,11 @@ class InfoXML(Bcfg2.Server.Lint.ServerPlugin):
         if 'Cfg' not in self.core.plugins:
             return
 
-        for filename, entryset in self.core.plugins['Cfg'].entries.items():
+        for filename, entryset in list(self.core.plugins['Cfg'].entries.items()):
             infoxml_fname = os.path.join(entryset.path, "info.xml")
             if self.HandlesFile(infoxml_fname):
                 found = False
-                for entry in entryset.entries.values():
+                for entry in list(entryset.entries.values()):
                     if isinstance(entry, CfgInfoXML):
                         self.check_infoxml(infoxml_fname,
                                            entry.infoxml.xdata)

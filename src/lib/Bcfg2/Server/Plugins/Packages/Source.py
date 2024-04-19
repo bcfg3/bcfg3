@@ -310,7 +310,7 @@ class Source(Debuggable):  # pylint: disable=R0902
         opts = xsource.findall("Options")
         for el in opts:
             repoopts = dict([(k, v)
-                             for k, v in el.attrib.items()
+                             for k, v in list(el.attrib.items())
                              if k != "clientonly" and k != "serveronly"])
             if el.get("clientonly", "false").lower() == "false":
                 self.server_options.update(repoopts)

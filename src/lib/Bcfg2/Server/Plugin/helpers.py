@@ -145,7 +145,7 @@ def _get_template_data(func_name, args, default=_sentinel):
     source = dict()
     for prov in providers:
         pdata = getattr(prov, func_name)(*args)
-        for key, val in pdata.items():
+        for key, val in list(pdata.items()):
             if key not in rv:
                 rv[key] = val
                 source[key] = prov
@@ -348,7 +348,7 @@ class DirectoryBacked(Debuggable):
         self.add_directory_monitor('')
 
     def set_debug(self, debug):
-        for entry in self.entries.values():
+        for entry in list(self.entries.values()):
             if isinstance(entry, Debuggable):
                 entry.set_debug(debug)
         return Debuggable.set_debug(self, debug)
@@ -379,7 +379,7 @@ class DirectoryBacked(Debuggable):
         :returns: None
         """
         dirpathname = os.path.join(self.data, relative)
-        if relative not in self.handles.values():
+        if relative not in list(self.handles.values()):
             if not os.path.isdir(dirpathname):
                 self.logger.error("%s is not a directory" % dirpathname)
                 return
@@ -801,7 +801,7 @@ class StructFile(XMLFileBacked):
         """ recursive helper for
         :func:`Bcfg2.Server.Plugin.helpers.StructFile.Match` """
         if self._include_element(item, metadata, *args):
-            if item.tag in self._include_tests.keys():
+            if item.tag in list(self._include_tests.keys()):
                 rv = []
                 if self._include_element(item, metadata, *args):
                     for child in item.iterchildren():
@@ -854,7 +854,7 @@ class StructFile(XMLFileBacked):
         """ recursive helper for
         :func:`Bcfg2.Server.Plugin.helpers.StructFile.XMLMatch` """
         if self._include_element(item, metadata, *args):
-            if item.tag in self._include_tests.keys():
+            if item.tag in list(self._include_tests.keys()):
                 for child in item.iterchildren():
                     item.remove(child)
                     item.getparent().append(child)
@@ -945,7 +945,7 @@ class InfoXML(StructFile):
         elif len(fileinfo) > 1:
             self.logger.warning("Multiple file metadata found in %s for %s" %
                                 (self.name, entry.get('name')))
-        for attr, val in fileinfo[0].attrib.items():
+        for attr, val in list(fileinfo[0].attrib.items()):
             entry.set(attr, val)
 
 
@@ -1003,7 +1003,7 @@ class PrioDir(Plugin, Generator, XMLDirectoryBacked):
     def HandleEvent(self, event):
         XMLDirectoryBacked.HandleEvent(self, event)
         self.Entries = {}
-        for src in self.entries.values():
+        for src in list(self.entries.values()):
             for child in src.xdata.iterchildren():
                 if child.tag in ['Group', 'Client']:
                     continue
@@ -1040,7 +1040,7 @@ class PrioDir(Plugin, Generator, XMLDirectoryBacked):
         :returns: None
         """
         matching = []
-        for src in self.entries.values():
+        for src in list(self.entries.values()):
             for candidate in src.XMLMatch(metadata).xpath("//%s" % entry.tag):
                 if self._matches(entry, metadata, candidate):
                     matching.append((src, candidate))
@@ -1297,7 +1297,7 @@ class EntrySet(Debuggable):
 
     def set_debug(self, debug):
         rv = Debuggable.set_debug(self, debug)
-        for entry in self.entries.values():
+        for entry in list(self.entries.values()):
             entry.set_debug(debug)
         return rv
 
@@ -1634,7 +1634,7 @@ class GroupSpool(Plugin, Generator):
             return self.handles[event.requestID].rstrip("/")
 
     def set_debug(self, debug):
-        for entry in self.entries.values():
+        for entry in list(self.entries.values()):
             if hasattr(entry, "set_debug"):
                 entry.set_debug(debug)
         return Plugin.set_debug(self, debug)
@@ -1738,14 +1738,14 @@ class CallableDict(MutableMapping):
         return len(self._getters)
 
     def __iter__(self):
-        return iter(self._getters.keys())
+        return iter(list(self._getters.keys()))
 
     def _current_data(self):
         """ Return a dict with the current available static data
         and ``unknown`` for all callable values.
         """
         rv = dict()
-        for key in self._getters.keys():
+        for key in list(self._getters.keys()):
             if callable(self._getters[key]):
                 rv[key] = 'unknown'
             else:
@@ -1777,7 +1777,7 @@ class OnDemandDict(CallableDict):
 
     def _current_data(self):
         rv = super(OnDemandDict, self)._current_data()
-        for (key, value) in rv.items():
+        for (key, value) in list(rv.items()):
             if key in self._values:
                 rv[key] = value
         return rv

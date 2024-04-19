@@ -124,8 +124,8 @@ class RedisTransport(TransportBase):
         resp = pubsub.listen()
         signal.signal(signal.SIGALRM, self.shutdown)
         signal.alarm(10)
-        resp.next() # clear subscribe message
-        response = resp.next()
+        next(resp) # clear subscribe message
+        response = next(resp)
         pubsub.unsubscribe()
 
         try:

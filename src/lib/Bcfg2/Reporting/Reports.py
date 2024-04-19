@@ -12,7 +12,7 @@ from django.core.exceptions import ObjectDoesNotExist
 def print_entries(interaction, etype):
     items = getattr(interaction, etype)()
     for item in items:
-        print("%-70s %s" % (item.entry_type + ":" + item.name, etype))
+        print(("%-70s %s" % (item.entry_type + ":" + item.name, etype)))
 
 
 class _FlagsFilterMixin(object):
@@ -63,7 +63,7 @@ class _SingleHostCmd(Bcfg2.Options.Subcommand):  # pylint: disable=W0223
         try:
             return Client.objects.select_related().get(name=setup.host)
         except Client.DoesNotExist:
-            print("No such host: %s" % setup.host)
+            print(("No such host: %s" % setup.host))
             raise SystemExit(2)
 
 
@@ -83,7 +83,7 @@ class Show(_SingleHostCmd, _FlagsFilterMixin):
         show_all = not setup.bad and not setup.extra and not setup.modified
         interaction = self.get_interaction(client, setup)
         if interaction is None:
-            print("No interactions found for host: %s" % client.name)
+            print(("No interactions found for host: %s" % client.name))
         else:
             if setup.bad or show_all:
                 print_entries(interaction, "bad")
@@ -102,11 +102,11 @@ class Total(_SingleHostCmd, _FlagsFilterMixin):
         client = self.get_client(setup)
         interaction = self.get_interaction(client, setup)
         if interaction is None:
-            print("No interactions found for host: %s" % client.name)
+            print(("No interactions found for host: %s" % client.name))
         else:
             managed = interaction.total_count
             good = interaction.good_count
-            print("Total managed entries: %d (good: %d)" % (managed, good))
+            print(("Total managed entries: %d (good: %d)" % (managed, good)))
 
 
 class Expire(_SingleHostCmd):
@@ -116,10 +116,10 @@ class Expire(_SingleHostCmd):
         client = self.get_client(setup)
         if client.expiration is None:
             client.expiration = datetime.datetime.now()
-            print("%s expired." % client.name)
+            print(("%s expired." % client.name))
         else:
             client.expiration = None
-            print("%s un-expired." % client.name)
+            print(("%s un-expired." % client.name))
         client.save()
 
 
@@ -168,7 +168,7 @@ class _ClientSelectCmd(Bcfg2.Options.Subcommand, _FlagsFilterMixin):
                 except AttributeError:
                     fdata.append(extra.get(field, "N/A"))
 
-        print(fmt % tuple(fdata))
+        print((fmt % tuple(fdata)))
 
     def display(self, setup, result, fields, extra=None):
         if 'name' not in fields:
@@ -188,7 +188,7 @@ class _ClientSelectCmd(Bcfg2.Options.Subcommand, _FlagsFilterMixin):
             else:
                 ffmt.append("%%-%ds" % len(field))
         fmt = "  ".join(ffmt)
-        print(fmt % tuple(f.title() for f in fields))
+        print((fmt % tuple(f.title() for f in fields)))
         for client in result:
             if not client.expiration:
                 self._print_fields(setup, fields, client, fmt,
@@ -264,8 +264,8 @@ class Entries(_ClientSelectCmd):
                 entries = [l.strip().split(":") for l in setup.file]
             except IOError:
                 err = sys.exc_info()[1]
-                print("Cannot read entries from %s: %s" % (setup.file.name,
-                                                           err))
+                print(("Cannot read entries from %s: %s" % (setup.file.name,
+                                                           err)))
                 return 2
         else:
             entries = [a.split(":") for a in setup.entries]
@@ -302,7 +302,7 @@ class Entry(_ClientSelectCmd):
         try:
             entry_cls = BaseEntry.entry_from_type(etype)
         except ValueError:
-            print("Unhandled/unknown type %s" % etype)
+            print(("Unhandled/unknown type %s" % etype))
             return 2
 
         # TODO: batch fetch this.  sqlite could break
@@ -328,7 +328,7 @@ class CLI(Bcfg2.Options.CommandRegistry):
 
     def __init__(self):
         Bcfg2.Options.CommandRegistry.__init__(self)
-        self.register_commands(globals().values())
+        self.register_commands(list(globals().values()))
         parser = Bcfg2.Options.get_parser(
             description="Query the Bcfg2 reporting subsystem",
             components=[self])

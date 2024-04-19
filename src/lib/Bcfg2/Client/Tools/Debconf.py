@@ -126,5 +126,5 @@ class Debconf(Bcfg2.Client.Tools.Tool):
                         extra[name] = Bcfg2.Client.XML.Element(
                             'Conf', name=name, type='debconf',
                             current_value=current_value[1:])
-        return extra.values()
+        return list(extra.values())
     FindExtra.__doc__ = Bcfg2.Client.Tools.Tool.FindExtra.__doc__

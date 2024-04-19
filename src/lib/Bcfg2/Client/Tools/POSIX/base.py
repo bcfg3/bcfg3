@@ -250,7 +250,7 @@ class POSIXTool(Bcfg2.Client.Tools.Tool):
                               entry.get("name"))
             return True
 
-        for aclkey, perms in acls.items():
+        for aclkey, perms in list(acls.items()):
             atype, scope, qualifier = aclkey
             if atype == "default":
                 if defacl is None:
@@ -260,7 +260,7 @@ class POSIXTool(Bcfg2.Client.Tools.Tool):
                 aclentry = posix1e.Entry(defacl)
             else:
                 aclentry = posix1e.Entry(acl)
-            for perm in ACL_MAP.values():
+            for perm in list(ACL_MAP.values()):
                 if perm & perms:
                     aclentry.permset.add(perm)
             aclentry.tag_type = scope
@@ -374,7 +374,7 @@ class POSIXTool(Bcfg2.Client.Tools.Tool):
             return 0
         elif hasattr(perms, 'test'):
             # Permset object
-            return sum([p for p in ACL_MAP.values()
+            return sum([p for p in list(ACL_MAP.values())
                         if perms.test(p)])
 
         try:
@@ -576,7 +576,7 @@ class POSIXTool(Bcfg2.Client.Tools.Tool):
                 self.logger.debug("POSIX: " + error)
             entry.set('qtext', "\n".join([entry.get('qtext', '')] + errors))
         if path == entry.get("name"):
-            for attr, val in attrib.items():
+            for attr, val in list(attrib.items()):
                 if val is not None:
                     entry.set(attr, str(val))
 
@@ -710,10 +710,10 @@ class POSIXTool(Bcfg2.Client.Tools.Tool):
         missing = []
         extra = []
         wrong = []
-        for aclkey, perms in wanted.items():
+        for aclkey, perms in list(wanted.items()):
             _verify_acl(aclkey, perms)
 
-        for aclkey, perms in existing.items():
+        for aclkey, perms in list(existing.items()):
             if aclkey not in wanted:
                 extra.append(self._acl2string(aclkey, perms))
 

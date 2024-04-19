@@ -31,7 +31,7 @@ class TemplateHelper(ServerPlugin):
         self.reserved_defaults = dummy.reserved_defaults
 
     def Run(self):
-        for helper in self.core.plugins['TemplateHelper'].entries.values():
+        for helper in list(self.core.plugins['TemplateHelper'].entries.values()):
             if self.HandlesFile(helper.name):
                 self.check_helper(helper.name)
 

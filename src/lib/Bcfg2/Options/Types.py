@@ -86,7 +86,7 @@ _bytes_multipliers = dict(k=1,
                           m=2,
                           g=3,
                           t=4)
-_suffixes = "".join(_bytes_multipliers.keys()).lower()
+_suffixes = "".join(list(_bytes_multipliers.keys())).lower()
 _suffixes += _suffixes.upper()
 _bytes_re = re.compile(r'(?P<value>\d+)(?P<multiplier>[%s])?' % _suffixes)
 # pylint: enable=C0103

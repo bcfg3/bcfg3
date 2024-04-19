@@ -50,9 +50,9 @@ class CfgCheetahGenerator(CfgGenerator):
     def get_data(self, entry, metadata):
         template = Template(self.data.decode(Bcfg2.Options.setup.encoding),
                             compilerSettings=self.settings)
-        for key, val in get_template_data(
+        for key, val in list(get_template_data(
             entry, metadata, self.name,
-            default=DefaultCheetahDataProvider()).items():
+            default=DefaultCheetahDataProvider()).items()):
             setattr(template, key, val)
         return template.respond()
     get_data.__doc__ = CfgGenerator.get_data.__doc__

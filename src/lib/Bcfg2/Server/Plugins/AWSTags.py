@@ -26,7 +26,7 @@ class AWSTagPattern(object):
 
     def get_groups(self, tags):
         """ Get groups that apply to the given tag set """
-        for key, value in tags.items():
+        for key, value in list(tags.items()):
             name_match = self.name.search(key)
             if name_match:
                 if self.value is not None:

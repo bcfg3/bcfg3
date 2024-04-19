@@ -499,16 +499,16 @@ class YUM(Bcfg2.Client.Tools.PkgTool):
             if self.yumbase.comps.has_group(entry.get('group')):
                 group = self.yumbase.comps.return_group(entry.get('group'))
                 group_packages = [p
-                                  for p, d in group.mandatory_packages.items()
+                                  for p, d in list(group.mandatory_packages.items())
                                   if d]
                 group_type = entry.get('choose', 'default')
                 if group_type in ['default', 'optional', 'all']:
                     group_packages += [
-                        p for p, d in group.default_packages.items()
+                        p for p, d in list(group.default_packages.items())
                         if d]
                 if group_type in ['optional', 'all']:
                     group_packages += [
-                        p for p, d in group.optional_packages.items()
+                        p for p, d in list(group.optional_packages.items())
                         if d]
                 if len(group_packages) == 0:
                     self.logger.error("No packages found for group %s" %

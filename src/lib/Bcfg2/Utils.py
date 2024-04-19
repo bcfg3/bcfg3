@@ -166,7 +166,7 @@ class ExecutorResult(object):
         raise TypeError("'%s' object does not support item assignment" %
                         self.__class__.__name__)
 
-    def __nonzero__(self):
+    def __bool__(self):
         return self.__bool__()
 
     def __bool__(self):
@@ -308,7 +308,7 @@ def hostnames2ranges(hostnames):
                 hosts[key] = [match.group(2)]
 
     ranges = []
-    for name, nums in hosts.items():
+    for name, nums in list(hosts.items()):
         ranges.append(name[0] + list2range(nums) + name[1])
     return ranges
 
@@ -318,7 +318,7 @@ def safe_input(msg):
     # flush input buffer
     while len(select.select([sys.stdin.fileno()], [], [], 0.0)[0]) > 0:
         os.read(sys.stdin.fileno(), 4096)
-    return input(msg)
+    return eval(input(msg))
 
 
 def safe_module_name(prefix, module):

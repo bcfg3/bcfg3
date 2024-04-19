@@ -95,7 +95,7 @@ class Plugin(Debuggable):
     def set_debug(self, debug):
         self.debug_log("%s: debug = %s" % (self.name, self.debug_flag),
                        flag=True)
-        for entry in self.Entries.values():
+        for entry in list(self.Entries.values()):
             if isinstance(entry, Debuggable):
                 entry.set_debug(debug)
         return Debuggable.set_debug(self, debug)

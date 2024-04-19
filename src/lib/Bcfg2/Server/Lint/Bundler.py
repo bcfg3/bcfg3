@@ -11,7 +11,7 @@ class Bundler(ServerPlugin):
 
     def Run(self):
         self.missing_bundles()
-        for bundle in self.core.plugins['Bundler'].entries.values():
+        for bundle in list(self.core.plugins['Bundler'].entries.values()):
             if self.HandlesFile(bundle.name):
                 self.bundle_names(bundle)
 
@@ -32,11 +32,11 @@ class Bundler(ServerPlugin):
 
             ref_bundles = set([b.get("name")
                                for b in groupdata.findall("//Bundle")])
-            for bundle in self.core.plugins['Bundler'].bundles.values():
+            for bundle in list(self.core.plugins['Bundler'].bundles.values()):
                 ref_bundles |= set([rb.get("name") for rb in
                                     bundle.xdata.findall(".//RequiredBundle")])
 
-            allbundles = self.core.plugins['Bundler'].bundles.keys()
+            allbundles = list(self.core.plugins['Bundler'].bundles.keys())
             for bundle in ref_bundles:
                 if bundle not in allbundles:
                     self.LintError("bundle-not-found",

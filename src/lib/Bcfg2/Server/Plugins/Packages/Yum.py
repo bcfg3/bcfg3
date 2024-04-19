@@ -405,7 +405,7 @@ class YumCollection(Collection):
                 mainopts['debuglevel'] = "2"
 
             try:
-                for opt, val in Bcfg2.Options.setup.yum_options.items():
+                for opt, val in list(Bcfg2.Options.setup.yum_options.items()):
                     if opt not in self.option_blacklist:
                         mainopts[opt] = val
             except ConfigParser.NoSectionError:
@@ -486,7 +486,7 @@ class YumCollection(Collection):
                     opts = source.server_options
                 else:
                     opts = source.client_options
-                for opt, val in opts.items():
+                for opt, val in list(opts.items()):
                     config.set(reponame, opt, val)
 
         if raw:
@@ -805,7 +805,7 @@ class YumCollection(Collection):
                 packages[pkg[0]].append(pkg)
             except KeyError:
                 packages[pkg[0]] = [pkg]
-        for name, instances in packages.items():
+        for name, instances in list(packages.items()):
             pkgattrs = dict(type=self.ptype,
                             origin='Packages',
                             name=name)

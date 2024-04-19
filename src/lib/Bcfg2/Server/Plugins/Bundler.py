@@ -58,7 +58,7 @@ class Bundler(Plugin,
     def HandleEvent(self, event):
         XMLDirectoryBacked.HandleEvent(self, event)
         self.bundles = dict([(b.bundle_name, b)
-                             for b in self.entries.values()])
+                             for b in list(self.entries.values())])
 
     def validate_structures(self, metadata, structures):
         """ Translate <Path glob='...'/> entries into <Path name='...'/>
@@ -66,7 +66,7 @@ class Bundler(Plugin,
         for struct in structures:
             for pathglob in struct.xpath("//Path[@glob]"):
                 for plugin in self.core.plugins_by_type(Generator):
-                    for match in fnmatch.filter(plugin.Entries['Path'].keys(),
+                    for match in fnmatch.filter(list(plugin.Entries['Path'].keys()),
                                                 pathglob.get("glob")):
                         lxml.etree.SubElement(pathglob.getparent(),
                                               "Path", name=match)

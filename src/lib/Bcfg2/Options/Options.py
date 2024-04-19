@@ -26,7 +26,7 @@ def _debug(msg):
     enabled by changing this to True. The verbosity here is primarily
     of use to developers. """
     if unit_test:
-        print("DEBUG: %s" % msg)
+        print(("DEBUG: %s" % msg))
     elif os.environ.get('BCFG2_OPTIONS_DEBUG', '0').lower() in ["true", "yes",
                                                                 "on", "1"]:
         sys.stderr.write("%s\n" % msg)
@@ -178,7 +178,7 @@ class Option(object):
         determined that the default will be used (i.e., the option is
         not given on the command line or in the config file) to store
         the appropriate default value in the appropriate format."""
-        for parser, action in self.actions.items():
+        for parser, action in list(self.actions.items()):
             if hasattr(action, "finalize"):
                 if parser:
                     _debug("Finalizing %s for %s" % (self, parser))
@@ -276,7 +276,7 @@ class Option(object):
     def _set_default(self, value):
         """ Setter for the ``default`` property """
         self._default = value
-        for action in self.actions.values():
+        for action in list(self.actions.values()):
             action.default = value
 
     #: The current default value of this option
@@ -289,7 +289,7 @@ class Option(object):
     def _set_dest(self, value):
         """ Setter for the ``dest`` property """
         self._dest = value
-        for action in self.actions.values():
+        for action in list(self.actions.values()):
             action.dest = value
 
     def early_parsing_hook(self, early_opts):  # pylint: disable=C0111

@@ -160,7 +160,7 @@ class PacSource(Source):
                 pkg = parse_db_file(tar.extractfile(tarinfo))
                 packages[prefix].update(pkg)
 
-            for pkg in packages.values():
+            for pkg in list(packages.values()):
                 pkgname = pkg['%NAME%'][0]
                 self.pkgnames.add(pkgname)
                 bdeps[barch][pkgname] = []

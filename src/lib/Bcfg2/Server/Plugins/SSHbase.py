@@ -226,7 +226,7 @@ class SSHbase(Bcfg2.Server.Plugin.Plugin,
                        if pubk.endswith('.pub')]
             pubkeys.sort()
             for pubkey in pubkeys:
-                for entry in sorted(self.entries[pubkey].entries.values(),
+                for entry in sorted(list(self.entries[pubkey].entries.values()),
                                     key=lambda e: (e.specific.hostname or
                                                    e.specific.group)):
                     specific = entry.specific
@@ -421,9 +421,9 @@ class SSHbase(Bcfg2.Server.Plugin.Plugin,
                     self.entries[entry.get('name')].bind_entry(entry, metadata)
                     is_bound = True
                 except Bcfg2.Server.Plugin.PluginExecutionError:
-                    print("Failed to bind %s: %s") % (
+                    print(("Failed to bind %s: %s") % (
                         lxml.etree.tostring(entry),
-                        sys.exc_info()[1])
+                        sys.exc_info()[1]))
 
     def GenerateHostKeyPair(self, client, filename):
         """Generate new host key pair for client."""
@@ -497,7 +497,7 @@ class SSHbase(Bcfg2.Server.Plugin.Plugin,
         try:
             open(filename, 'w').write(entry['text'])
             if log:
-                print("Wrote file %s" % filename)
+                print(("Wrote file %s" % filename))
         except KeyError:
             self.logger.error("Failed to pull %s. This file does not "
                               "currently exist on the client" %

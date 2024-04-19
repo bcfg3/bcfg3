@@ -10,7 +10,7 @@ import lxml.etree
 import Bcfg2.Server
 import Bcfg2.Server.Cache
 import Bcfg2.Server.Plugin
-from Bcfg2.Compat import unicode, any  # pylint: disable=W0622
+from Bcfg2.Compat import str, any  # pylint: disable=W0622
 import Bcfg2.Server.FileMonitor
 from Bcfg2.Logger import Debuggable
 from Bcfg2.Server.Statistics import track_statistics
@@ -178,7 +178,7 @@ class DBProbeStore(ProbeStore, Bcfg2.Server.Plugin.DatabaseBacked):
         Bcfg2.Server.Cache.expire("Probes", "probedata", hostname)
         self._datacache[hostname] = ClientProbeDataSet()
         expire_metadata = False
-        for probe, pdata in data.items():
+        for probe, pdata in list(data.items()):
             self._datacache[hostname][probe] = pdata
             try:
                 record, created = ProbesDataModel.objects.get_or_create(
@@ -196,7 +196,7 @@ class DBProbeStore(ProbeStore, Bcfg2.Server.Plugin.DatabaseBacked):
                 record.save()
                 expire_metadata = True
         qset = ProbesDataModel.objects.filter(
-            hostname=hostname).exclude(probe__in=data.keys())
+            hostname=hostname).exclude(probe__in=list(data.keys()))
         if len(qset):
             qset.delete()
             expire_metadata = True
@@ -283,7 +283,7 @@ class XMLProbeStore(ProbeStore):
         Bcfg2.Server.Cache.expire("Probes", "probedata", hostname)
         self._datacache[hostname] = ClientProbeDataSet()
         expire_metadata = False
-        for probe, pdata in data.items():
+        for probe, pdata in list(data.items()):
             olddata = self._datacache[hostname].get(probe, ProbeData(''))
             self._datacache[hostname][probe] = pdata
             expire_metadata |= olddata != data
@@ -308,7 +308,7 @@ class ProbeData(str):  # pylint: disable=E0012,R0924
     ProbeData objects as XML, JSON, or YAML data """
     def __new__(cls, data):
         # prevent double encoding utf-8 in python3
-        if isinstance(data, unicode) and not isinstance(data, str):
+        if isinstance(data, str) and not isinstance(data, str):
             return str.__new__(cls, data.encode('utf-8'))
         else:
             return str.__new__(cls, data)

@@ -71,7 +71,7 @@ class Validate(Bcfg2.Server.Lint.ServerlessPlugin):
 
     def Run(self):
 
-        for path, schemaname in self.filesets.items():
+        for path, schemaname in list(self.filesets.items()):
             try:
                 filelist = self.filelists[path]
             except KeyError:
@@ -211,7 +211,7 @@ class Validate(Bcfg2.Server.Lint.ServerlessPlugin):
         values are lists of the full paths to all files in the Bcfg2
         repository (or given with ``bcfg2-lint --stdin``) that match
         the glob."""
-        for path in self.filesets.keys():
+        for path in list(self.filesets.keys()):
             if '/**/' in path:
                 if self.files is not None:
                     self.filelists[path] = self.list_matching_files(path)

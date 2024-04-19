@@ -7,7 +7,7 @@ try:
     from django.db import models, connections
 except ImproperlyConfigured:
     e = sys.exc_info()[1]
-    print("Reports: unable to import django models: %s" % e)
+    print(("Reports: unable to import django models: %s" % e))
     sys.exit(1)
 
 from django.core.cache import cache

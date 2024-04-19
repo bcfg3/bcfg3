@@ -13,7 +13,7 @@ import seobject
 import Bcfg2.Client.XML
 import Bcfg2.Client.Tools
 from Bcfg2.Client.Tools.POSIX.File import POSIXFile
-from Bcfg2.Compat import long  # pylint: disable=W0622
+from Bcfg2.Compat import int  # pylint: disable=W0622
 
 
 def pack128(int_val):
@@ -49,7 +49,7 @@ def netmask_itoa(netmask, proto="ipv4"):
     if netmask > size:
         raise ValueError("Netmask too large: %s" % netmask)
 
-    res = long(0)
+    res = int(0)
     for i in range(netmask):
         res |= 1 << (size - i - 1)
     netmask = socket.inet_ntop(family, pack128(res))
@@ -102,7 +102,7 @@ class SELinux(Bcfg2.Client.Tools.Tool):
 
     def FindExtra(self):
         extra = []
-        for handler in self.handlers.values():
+        for handler in list(self.handlers.values()):
             extra.extend(handler.FindExtra())
         return extra
 
@@ -372,7 +372,7 @@ class SELinuxEntryHandler(object):
         except ValueError:
             records = self.all_records
         return [self.key2entry(key)
-                for key in records.keys()
+                for key in list(records.keys())
                 if key not in specified]
 
 
@@ -390,8 +390,8 @@ class SELinuxSebooleanHandler(SELinuxEntryHandler):
         # the newer format as far as interoperation with the rest of
         # SELinuxEntryHandler goes
         rv = SELinuxEntryHandler.all_records.fget(self)
-        if rv.values()[0] in [0, 1]:
-            for key, val in rv.items():
+        if list(rv.values())[0] in [0, 1]:
+            for key, val in list(rv.items()):
                 rv[key] = [val, val, val]
         return rv
 
@@ -458,12 +458,12 @@ class SELinuxSeportHandler(SELinuxEntryHandler):
             # (type, level) as the value.  abstracting around this
             # sucks.
             ports = self.records.get_all()
-            if len(ports.keys()[0]) == 3:
+            if len(list(ports.keys())[0]) == 3:
                 self._all = ports
             else:
                 # uglist list comprehension ever?
                 self._all = dict([((k[0], k[1], v[1]), (v[0], v[2]))
-                                  for k, v in ports.items()])
+                                  for k, v in list(ports.items())])
         return self._all
 
     def _key(self, entry):
@@ -522,7 +522,7 @@ class SELinuxSefcontextHandler(SELinuxEntryHandler):
                          block="block device",
                          char="character device",
                          door="door")
-    filetypeattrs = dict([v, k] for k, v in filetypenames.iteritems())
+    filetypeattrs = dict([v, k] for k, v in filetypenames.items())
     custom_re = re.compile(r'-f \'(?P<filetype>[a-z ]+)\'.*? \'(?P<name>.*)\'')
 
     @property
@@ -754,7 +754,7 @@ class SELinuxSemoduleHandler(SELinuxEntryHandler):
                             self._all[mod] = (version, 1)
 
                         # get other (disabled) modules from the filesystem
-                        for mod in self._all_records_from_filesystem().keys():
+                        for mod in list(self._all_records_from_filesystem().keys()):
                             if mod not in self._all:
                                 self._all[mod] = ('', 0)
                     else:
@@ -902,7 +902,7 @@ class SELinuxSemoduleHandler(SELinuxEntryHandler):
         specified = [self._key(e)
                      for e in self.tool.getSupportedEntries()]
         rv = []
-        for module in self._all_records_from_filesystem().keys():
+        for module in list(self._all_records_from_filesystem().keys()):
             if module not in specified:
                 rv.append(self.key2entry(module))
         return rv

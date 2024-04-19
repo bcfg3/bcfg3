@@ -19,12 +19,11 @@ except ImportError:
 
 # urllib imports
 try:
-    from urllib import quote_plus
-    from urllib import urlretrieve
-    from urlparse import urljoin, urlparse
-    from urllib2 import HTTPBasicAuthHandler, \
-        HTTPPasswordMgrWithDefaultRealm, build_opener, install_opener, \
-        urlopen, HTTPError, URLError
+    from urllib.parse import quote_plus
+    from urllib.request import urlretrieve
+    from urllib.parse import urljoin, urlparse
+    from urllib.request import HTTPBasicAuthHandler, HTTPPasswordMgrWithDefaultRealm, build_opener, install_opener, urlopen
+    from urllib.error import HTTPError, URLError
 except ImportError:
     from urllib.parse import urljoin, urlparse, quote_plus
     from urllib.request import HTTPBasicAuthHandler, \
@@ -33,49 +32,49 @@ except ImportError:
     from urllib.error import HTTPError, URLError
 
 try:
-    from cStringIO import StringIO
+    from io import StringIO
 except ImportError:
     from io import StringIO
 
 try:
-    import ConfigParser
+    import configparser
 except ImportError:
     import configparser as ConfigParser
 
 try:
-    import cPickle
+    import pickle
 except ImportError:
     import pickle as cPickle
 
 try:
-    from Queue import Queue, Empty, Full
+    from queue import Queue, Empty, Full
 except ImportError:
     from queue import Queue, Empty, Full
 
 # xmlrpc imports
 try:
-    import xmlrpclib
-    import SimpleXMLRPCServer
+    import xmlrpc.client
+    import xmlrpc.server
 except ImportError:
     import xmlrpc.client as xmlrpclib
     import xmlrpc.server as SimpleXMLRPCServer
 
 # socketserver import
 try:
-    import SocketServer
+    import socketserver
 except ImportError:
     import socketserver as SocketServer
 
 # httplib imports
 try:
-    import httplib
+    import http.client
 except ImportError:
     import http.client as httplib
 
 try:
-    unicode = unicode
+    str = str
 except NameError:
-    unicode = str
+    str = str
 
 
 def u_str(string, encoding=None):
@@ -84,13 +83,13 @@ def u_str(string, encoding=None):
         return string
     else:
         if encoding is not None:
-            return unicode(string, encoding)
+            return str(string, encoding)
         else:
-            return unicode(string)
+            return str(string)
 
 
 def ensure_binary(string, encoding='utf-8'):
-    if type(string) == unicode:
+    if type(string) == str:
         return string.encode(encoding)
     return string
 
@@ -280,7 +279,7 @@ def oct_mode(mode):
 
 
 try:
-    long = long
+    long = int
 except NameError:
     # longs are just ints in py3k
     long = int

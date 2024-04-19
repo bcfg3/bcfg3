@@ -959,7 +959,7 @@ class Metadata(Bcfg2.Server.Plugin.Metadata,
 
     def HandleEvent(self, event):
         """Handle update events for data files."""
-        for handles, event_handler in self.handlers.items():
+        for handles, event_handler in list(self.handlers.items()):
             if handles(event):
                 # clear the entire cache when we get an event for any
                 # metadata file
@@ -968,7 +968,7 @@ class Metadata(Bcfg2.Server.Plugin.Metadata,
                 # clear out the list of category suppressions that
                 # have been warned about, since this may change when
                 # clients.xml or groups.xml changes.
-                for group in self.groups.values():
+                for group in list(self.groups.values()):
                     group.warned = []
                 event_handler(event)
 
@@ -1120,7 +1120,7 @@ class Metadata(Bcfg2.Server.Plugin.Metadata,
                             self.groups[grpname].category):
                         categories[self.groups[grpname].category] = grpname
             groups.update(newgroups)
-            for grpname, predicates in self.negated_groups.items():
+            for grpname, predicates in list(self.negated_groups.items()):
                 if grpname not in groups:
                     continue
                 if any(p(client, groups, categories) for p in predicates):
@@ -1289,16 +1289,16 @@ class Metadata(Bcfg2.Server.Plugin.Metadata,
     def get_all_group_names(self):
         """ return a list of all group names """
         all_groups = set()
-        all_groups.update(self.groups.keys())
-        all_groups.update(self.group_membership.keys())
-        all_groups.update(self.negated_groups.keys())
-        for grp in self.clientgroups.values():
+        all_groups.update(list(self.groups.keys()))
+        all_groups.update(list(self.group_membership.keys()))
+        all_groups.update(list(self.negated_groups.keys()))
+        for grp in list(self.clientgroups.values()):
             all_groups.update(grp)
         return all_groups
 
     def get_all_groups_in_category(self, category):
         """ return a list of names of groups in the given category """
-        return set([g.name for g in self.groups.values()
+        return set([g.name for g in list(self.groups.values())
                     if g.category == category])
 
     def get_client_names_by_profiles(self, profiles):

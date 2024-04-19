@@ -245,7 +245,7 @@ class APT(Bcfg2.Client.Tools.Tool):
                     self.logger.error("Failed to find %s in apt package "
                                       "cache" % pkgname)
                 continue
-            avail_vers = self.pkg_cache[pkgname].versions.keys()
+            avail_vers = list(self.pkg_cache[pkgname].versions.keys())
             if pkg.get('version') in avail_vers:
                 ipkgs.append("%s=%s" % (pkgname, pkg.get('version')))
                 continue

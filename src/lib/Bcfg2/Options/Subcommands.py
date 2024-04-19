@@ -151,17 +151,17 @@ class Help(Subcommand):
 
     def run(self, setup):
         commands = dict((name, cmd)
-                        for (name, cmd) in self._registry.commands.items()
+                        for (name, cmd) in list(self._registry.commands.items())
                         if not cmd.only_interactive)
         if setup.command:
             try:
                 commands[setup.command].parser.print_help()
                 return 0
             except KeyError:
-                print("No such command: %s" % setup.command)
+                print(("No such command: %s" % setup.command))
                 return 1
         for command in sorted(commands.keys()):
-            print(commands[command].usage())
+            print((commands[command].usage()))
 
 
 class CommandRegistry(object):

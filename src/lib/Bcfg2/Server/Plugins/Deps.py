@@ -65,7 +65,7 @@ class Deps(Bcfg2.Server.Plugin.PrioDir,
             # tuples of (PriorityStructFile, element) for each
             # matching element and the structfile that contains it
             matching = []
-            for deps in self.entries.values():
+            for deps in list(self.entries.values()):
                 el = deps.find("/%s[name='%s']" % (entry.tag,
                                                    entry.get("name")))
                 if el:

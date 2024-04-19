@@ -38,10 +38,10 @@ def print_tabular(rows):
                   for index in range(len(rows[0]))])
     fstring = (" %%-%ss |" * len(cmax)) % cmax
     fstring = ('|'.join([" %%-%ss "] * len(cmax))) % cmax
-    print(fstring % rows[0])
-    print((sum(cmax) + (len(cmax) * 2) + (len(cmax) - 1)) * '=')
+    print((fstring % rows[0]))
+    print(((sum(cmax) + (len(cmax) * 2) + (len(cmax) - 1)) * '='))
     for row in rows[1:]:
-        print(fstring % row)
+        print((fstring % row))
 
 
 def display_trace(trace):
@@ -137,7 +137,7 @@ class Debug(InfoCmd):
         Bcfg2.Options.Option(
             "--interpreter", cf=("bcfg2-info", "interpreter"),
             env="BCFG2_INFO_INTERPRETER",
-            choices=interpreters.keys(), default=default_interpreter)]
+            choices=list(interpreters.keys()), default=default_interpreter)]
 
     def run(self, setup):
         if setup.cmd_list:
@@ -167,7 +167,7 @@ class Build(InfoCmd):
                 pretty_print=True)
         except IOError:
             err = sys.exc_info()[1]
-            print("Failed to write %s: %s" % (setup.filename, err))
+            print(("Failed to write %s: %s" % (setup.filename, err)))
 
 
 class Builddir(InfoCmd):
@@ -200,8 +200,8 @@ dir>.  This only handles file entries, and does not respect 'owner' or
                         entry.get("type") not in self.blacklisted_types):
                     failure = entry.get("failure")
                     if failure is not None:
-                        print("Skipping entry %s:%s with bind failure: %s" %
-                              (entry.tag, entry.get("name"), failure))
+                        print(("Skipping entry %s:%s with bind failure: %s" %
+                              (entry.tag, entry.get("name"), failure)))
                         continue
                     entry.set('name',
                               os.path.join(setup.directory,
@@ -228,8 +228,8 @@ class Buildfile(InfoCmd):
         try:
             self.core.Bind(entry, self.core.build_metadata(setup.hostname))
         except:  # pylint: disable=W0702
-            print("Failed to build entry %s for host %s" % (setup.filename,
-                                                            setup.hostname))
+            print(("Failed to build entry %s for host %s" % (setup.filename,
+                                                            setup.hostname)))
             raise
         try:
             setup.outfile.write(
@@ -238,7 +238,7 @@ class Buildfile(InfoCmd):
             setup.outfile.write("\n")
         except IOError:
             err = sys.exc_info()[1]
-            print("Failed to write %s: %s" % (setup.outfile.name, err))
+            print(("Failed to write %s: %s" % (setup.outfile.name, err)))
 
 
 class BuildAllMixin(object):
@@ -265,7 +265,7 @@ class BuildAllMixin(object):
         except OSError:
             err = sys.exc_info()[1]
             if err.errno != 17:
-                print("Could not create %s: %s" % (setup.directory, err))
+                print(("Could not create %s: %s" % (setup.directory, err)))
                 return 1
         clients = self.get_client_list(setup.hostname)
         for client in clients:
@@ -324,16 +324,16 @@ class Buildbundle(InfoCmd):
             if fname in bundler.entries:
                 bundle = bundler.entries[bundle]
         if not bundle:
-            print("No such bundle %s" % setup.bundle)
+            print(("No such bundle %s" % setup.bundle))
             return 1
         try:
             metadata = self.core.build_metadata(setup.hostname)
-            print(lxml.etree.tostring(bundle.XMLMatch(metadata),
+            print((lxml.etree.tostring(bundle.XMLMatch(metadata),
                                       xml_declaration=False,
-                                      pretty_print=True).decode('UTF-8'))
+                                      pretty_print=True).decode('UTF-8')))
         except:  # pylint: disable=W0702
-            print("Failed to render bundle %s for host %s: %s" %
-                  (setup.bundle, setup.hostname, sys.exc_info()[1]))
+            print(("Failed to render bundle %s for host %s: %s" %
+                  (setup.bundle, setup.hostname, sys.exc_info()[1])))
             raise
 
 
@@ -358,12 +358,12 @@ class Automatch(InfoCmd):
         if (not Bcfg2.Options.setup.force and
                 not Bcfg2.Options.setup.automatch and
                 pfile.xdata.get("automatch", "false").lower() != "true"):
-            print("Automatch not enabled on %s" % setup.propertyfile)
+            print(("Automatch not enabled on %s" % setup.propertyfile))
         else:
             metadata = self.core.build_metadata(setup.hostname)
-            print(lxml.etree.tostring(pfile.XMLMatch(metadata),
+            print((lxml.etree.tostring(pfile.XMLMatch(metadata),
                                       xml_declaration=False,
-                                      pretty_print=True).decode('UTF-8'))
+                                      pretty_print=True).decode('UTF-8')))
 
 
 class ExpireCache(InfoCmd):
@@ -437,7 +437,7 @@ class Config(InfoCmd):
                 value = getattr(setup, option.dest)
                 if any(issubclass(a.__class__,
                                   Bcfg2.Options.ComponentAction)
-                       for a in option.actions.values()):
+                       for a in list(option.actions.values())):
                     if not setup.raw:
                         try:
                             if option.action.islist:
@@ -473,15 +473,15 @@ class Probes(InfoCmd):
         if setup.pretty:
             for probe in probes:
                 pname = probe.get("name")
-                print("=" * (len(pname) + 2))
-                print(" %s" % pname)
-                print("=" * (len(pname) + 2))
+                print(("=" * (len(pname) + 2)))
+                print((" %s" % pname))
+                print(("=" * (len(pname) + 2)))
                 print("")
-                print(probe.text)
+                print((probe.text))
                 print("")
         else:
-            print(lxml.etree.tostring(probes, xml_declaration=False,
-                                      pretty_print=True).decode('UTF-8'))
+            print((lxml.etree.tostring(probes, xml_declaration=False,
+                                      pretty_print=True).decode('UTF-8')))
 
 
 class Showentries(InfoCmd):
@@ -494,8 +494,8 @@ class Showentries(InfoCmd):
         try:
             metadata = self.core.build_metadata(setup.hostname)
         except Bcfg2.Server.Plugin.MetadataConsistencyError:
-            print("Unable to build metadata for %s: %s" % (setup.hostname,
-                                                           sys.exc_info()[1]))
+            print(("Unable to build metadata for %s: %s" % (setup.hostname,
+                                                           sys.exc_info()[1])))
         structures = self.core.GetStructures(metadata)
         output = [('Entry Type', 'Name')]
         etypes = None
@@ -540,39 +540,39 @@ class Showclient(InfoCmd):
             try:
                 metadata = self.core.build_metadata(client)
             except Bcfg2.Server.Plugin.MetadataConsistencyError:
-                print("Could not build metadata for %s: %s" %
-                      (client, sys.exc_info()[1]))
+                print(("Could not build metadata for %s: %s" %
+                      (client, sys.exc_info()[1])))
                 continue
             fmt = "%-10s  %s"
-            print(fmt % ("Hostname:", metadata.hostname))
-            print(fmt % ("Profile:", metadata.profile))
+            print((fmt % ("Hostname:", metadata.hostname)))
+            print((fmt % ("Profile:", metadata.profile)))
 
             group_fmt = "%-10s  %-30s %s"
             header = False
             for group in sorted(list(metadata.groups)):
                 category = ""
-                for cat, grp in metadata.categories.items():
+                for cat, grp in list(metadata.categories.items()):
                     if grp == group:
                         category = "Category: %s" % cat
                         break
                 if not header:
-                    print(group_fmt % ("Groups:", group, category))
+                    print((group_fmt % ("Groups:", group, category)))
                     header = True
                 else:
-                    print(group_fmt % ("", group, category))
+                    print((group_fmt % ("", group, category)))
 
             if metadata.bundles:
                 sorted_bundles = sorted(list(metadata.bundles))
-                print(fmt % ("Bundles:", sorted_bundles[0]))
+                print((fmt % ("Bundles:", sorted_bundles[0])))
                 for bnd in sorted_bundles[1:]:
-                    print(fmt % ("", bnd))
+                    print((fmt % ("", bnd)))
             if metadata.connectors:
                 print("Connector data")
-                print("=" * 80)
+                print(("=" * 80))
                 for conn in metadata.connectors:
                     if getattr(metadata, conn):
-                        print(fmt % (conn + ":", getattr(metadata, conn)))
-                        print("=" * 80)
+                        print((fmt % (conn + ":", getattr(metadata, conn))))
+                        print(("=" * 80))
 
 
 class Mappings(InfoCmd):
@@ -625,10 +625,10 @@ class PackageResolve(InfoCmd):
 
         pkgs._build_packages(metadata, indep,  # pylint: disable=W0212
                              structures)
-        print("%d new packages added" % len(indep.getchildren()))
+        print(("%d new packages added" % len(indep.getchildren())))
         if len(indep.getchildren()):
-            print("    %s" % "\n    ".join(lxml.etree.tostring(p)
-                                           for p in indep.getchildren()))
+            print(("    %s" % "\n    ".join(lxml.etree.tostring(p)
+                                           for p in indep.getchildren())))
 
 
 class Packagesources(InfoCmd):
@@ -645,10 +645,10 @@ class Packagesources(InfoCmd):
         try:
             metadata = self.core.build_metadata(setup.hostname)
         except Bcfg2.Server.Plugin.MetadataConsistencyError:
-            print("Unable to build metadata for %s: %s" % (setup.hostname,
-                                                           sys.exc_info()[1]))
+            print(("Unable to build metadata for %s: %s" % (setup.hostname,
+                                                           sys.exc_info()[1])))
             return 1
-        print(pkgs.get_collection(metadata).sourcelist())
+        print((pkgs.get_collection(metadata).sourcelist()))
 
 
 class Query(InfoCmd):
@@ -677,7 +677,7 @@ class Query(InfoCmd):
         elif setup.querybundles:
             res = self.core.metadata.get_client_names_by_bundles(
                 setup.querybundles)
-        print("\n".join(res))
+        print(("\n".join(res)))
 
 
 class Quit(InfoCmd):
@@ -791,7 +791,7 @@ class ProfileTemplates(InfoCmd):
 
         # print out per-file results
         tmpltimes = []
-        for tmpl, ptimes in times.items():
+        for tmpl, ptimes in list(times.items()):
             try:
                 mean = float(sum(ptimes)) / len(ptimes)
             except ZeroDivisionError:
@@ -801,10 +801,10 @@ class ProfileTemplates(InfoCmd):
             std = self.stdev(ptimes)
             if mean > 0.01 or median > 0.01 or std > 1 or setup.templates:
                 tmpltimes.append((tmpl, mean, median, std))
-        print("%-50s %-9s  %-11s  %6s" %
-              ("Template", "Mean Time", "Median Time", "σ"))
+        print(("%-50s %-9s  %-11s  %6s" %
+              ("Template", "Mean Time", "Median Time", "σ")))
         for info in reversed(sorted(tmpltimes, key=operator.itemgetter(1))):
-            print("%-50s %9.02f  %11.02f  %6.02f" % info)
+            print(("%-50s %9.02f  %11.02f  %6.02f" % info))
 
 
 if HAS_PROFILE:
@@ -856,7 +856,7 @@ class CLI(cmd.Cmd, Bcfg2.Options.CommandRegistry):
         Bcfg2.Options.CommandRegistry.__init__(self)
         self.prompt = 'bcfg2-info> '
 
-        self.register_commands(globals().values(), parent=InfoCmd)
+        self.register_commands(list(globals().values()), parent=InfoCmd)
         parser = Bcfg2.Options.get_parser(
             description="Inspect a running Bcfg2 server",
             components=[self, InfoCore])
@@ -872,7 +872,7 @@ class CLI(cmd.Cmd, Bcfg2.Options.CommandRegistry):
                 print("Profiling functionality not available.")
             self.core = InfoCore(self)
 
-        for command in self.commands.values():
+        for command in list(self.commands.values()):
             command.core = self.core
 
     def run(self):

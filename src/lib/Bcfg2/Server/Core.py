@@ -301,7 +301,7 @@ class Core(object):
         :returns: list of :attr:`Bcfg2.Server.Plugin.base.Plugin`
                   objects
         """
-        return sorted([plugin for plugin in self.plugins.values()
+        return sorted([plugin for plugin in list(self.plugins.values())
                        if isinstance(plugin, base_cls)],
                       key=lambda p: (p.sort_order, p.name))
 
@@ -312,7 +312,7 @@ class Core(object):
         while not self.terminate.isSet():
             self.terminate.wait(Bcfg2.Options.setup.performance_interval)
             if not self.terminate.isSet():
-                for name, stats in self.get_statistics(None).items():
+                for name, stats in list(self.get_statistics(None).items()):
                     self.logger.info("Performance statistics: "
                                      "%s min=%.06f, max=%.06f, average=%.06f, "
                                      "count=%d" % ((name, ) + stats))
@@ -1041,7 +1041,7 @@ class Core(object):
     def _get_rmi(self):
         """ Get a list of RMI calls exposed by plugins """
         rmi = dict()
-        for pname, pinst in self._get_rmi_objects().items():
+        for pname, pinst in list(self._get_rmi_objects().items()):
             for mname in pinst.__rmi__:
                 rmi["%s.%s" % (pname, mname)] = getattr(pinst, mname)
         return rmi
@@ -1076,7 +1076,7 @@ class Core(object):
                    for name, func in inspect.getmembers(self, callable)
                    if (getattr(func, "exposed", False) and
                        self.check_acls(address, name))]
-        methods.extend([m for m in self._get_rmi().keys()
+        methods.extend([m for m in list(self._get_rmi().keys())
                         if self.check_acls(address, m)])
         return methods
 
@@ -1323,7 +1323,7 @@ class Core(object):
         """
         if debug not in [True, False]:
             debug = debug.lower() == "true"
-        for plugin in self.plugins.values():
+        for plugin in list(self.plugins.values()):
             plugin.set_debug(debug)
         rv = self.set_core_debug(address, debug)
         return self.fam.set_debug(debug) and rv

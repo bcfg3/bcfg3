@@ -188,7 +188,7 @@ class POSIXFile(POSIXTool):
         if interactive:
             entry.set("qtext", "\n".join(prompt))
         if not sensitive:
-            for attr, val in attrs.items():
+            for attr, val in list(attrs.items()):
                 entry.set(attr, val)
 
     def _diff(self, content1, content2, filename=None):

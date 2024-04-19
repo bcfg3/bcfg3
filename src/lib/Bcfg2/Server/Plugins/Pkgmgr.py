@@ -20,7 +20,7 @@ class FuzzyDict(dict):
             if mdata:
                 return dict.__getitem__(self, mdata.groupdict()['name'])
         else:
-            print("got non-string key %s" % str(key))
+            print(("got non-string key %s" % str(key)))
         return dict.__getitem__(self, key)
 
     def __contains__(self, key):
@@ -29,7 +29,7 @@ class FuzzyDict(dict):
             if mdata:
                 return dict.__contains__(self, mdata.groupdict()['name'])
         else:
-            print("got non-string key %s" % str(key))
+            print(("got non-string key %s" % str(key)))
         return dict.__contains__(self, key)
 
     def get(self, key, default=None):
@@ -66,7 +66,7 @@ class PNode(object):
             pdict['Package'] = set()
         for child in data.getchildren():
             attrs = set(data.attrib.keys()).difference(
-                child.attrib.keys() + ['name'])
+                list(child.attrib.keys()) + ['name'])
             for attr in attrs:
                 try:
                     child.set(attr, data.get(attr))
@@ -284,7 +284,7 @@ class Pkgmgr(Bcfg2.Server.Plugin.PrioDir):
     def HandlesEntry(self, entry, metadata):
         return (
             entry.tag == 'Package' and
-            entry.get('name').split(':')[0] in self.Entries['Package'].keys())
+            entry.get('name').split(':')[0] in list(self.Entries['Package'].keys()))
 
     def HandleEntry(self, entry, metadata):
         self.BindEntry(entry, metadata)

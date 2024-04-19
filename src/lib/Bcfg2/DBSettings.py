@@ -160,7 +160,7 @@ def finalize_django_config(opts=None, silent=False):
 
     logger.debug("Finalizing Django settings: %s" % settings)
     module = sys.modules[__name__]
-    for name, value in settings.items():
+    for name, value in list(settings.items()):
         setattr(module, name, value)
     try:
         django.conf.settings.configure(**settings)

@@ -424,7 +424,7 @@ class XMLRPCServer(SocketServer.ThreadingMixIn, SSLServer,
         except AttributeError:
             name = "unknown"
         if hasattr(instance, '_get_rmi'):
-            for fname, func in instance._get_rmi().items():
+            for fname, func in list(instance._get_rmi().items()):
                 self.register_function(func, name=fname)
         self.logger.info("serving %s at %s" % (name, self.url))
 

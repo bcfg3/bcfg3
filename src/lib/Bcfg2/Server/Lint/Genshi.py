@@ -36,8 +36,8 @@ class Genshi(Bcfg2.Server.Lint.ServerPlugin):
 
     def check_cfg(self):
         """ Check genshi templates in Cfg for syntax errors. """
-        for entryset in self.core.plugins['Cfg'].entries.values():
-            for entry in entryset.entries.values():
+        for entryset in list(self.core.plugins['Cfg'].entries.values()):
+            for entry in list(entryset.entries.values()):
                 if (self.HandlesFile(entry.name) and
                         isinstance(entry, CfgGenshiGenerator) and
                         not entry.template):
@@ -47,7 +47,7 @@ class Genshi(Bcfg2.Server.Lint.ServerPlugin):
     def check_bundler(self):
         """ Check templates in Bundler for syntax errors. """
         loader = TemplateLoader()
-        for entry in self.core.plugins['Bundler'].entries.values():
+        for entry in list(self.core.plugins['Bundler'].entries.values()):
             if (self.HandlesFile(entry.name) and
                     entry.template is not None):
                 self.check_template(loader, entry.name, cls=MarkupTemplate)

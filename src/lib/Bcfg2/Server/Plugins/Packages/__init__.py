@@ -166,7 +166,7 @@ class Packages(Bcfg2.Server.Plugin.Plugin,
     def set_debug(self, debug):
         rv = Bcfg2.Server.Plugin.Plugin.set_debug(self, debug)
         self.sources.set_debug(debug)
-        for collection in self.collections.values():
+        for collection in list(self.collections.values()):
             collection.set_debug(debug)
         return rv
     set_debug.__doc__ = Bcfg2.Server.Plugin.Plugin.set_debug.__doc__
@@ -366,7 +366,7 @@ class Packages(Bcfg2.Server.Plugin.Plugin,
         gkey = hash(tuple(groups))
         if gkey not in gcache:
             gcache[gkey] = collection.get_groups(groups)
-        for pkgs in gcache[gkey].values():
+        for pkgs in list(gcache[gkey].values()):
             base.update(pkgs)
 
         # essential pkgs are those marked as such by the distribution

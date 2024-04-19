@@ -34,7 +34,7 @@ class GroupNames(Bcfg2.Server.Lint.ServerPlugin):
 
     def check_rules(self):
         """ Check groups used in the Rules plugin for validity. """
-        for rules in self.core.plugins['Rules'].entries.values():
+        for rules in list(self.core.plugins['Rules'].entries.values()):
             if not self.HandlesFile(rules.name):
                 continue
             xdata = rules.pnode.data
@@ -44,7 +44,7 @@ class GroupNames(Bcfg2.Server.Lint.ServerPlugin):
 
     def check_bundles(self):
         """ Check groups used in the Bundler plugin for validity. """
-        for bundle in self.core.plugins['Bundler'].entries.values():
+        for bundle in list(self.core.plugins['Bundler'].entries.values()):
             if self.HandlesFile(bundle.name) and bundle.template is None:
                 self.check_entries(bundle.xdata.xpath("//Group"),
                                    bundle.name)

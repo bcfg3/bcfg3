@@ -19,7 +19,7 @@ class BatchFetch(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         """Provide compatibility with python < 3.0"""
         return self.__next__()
 

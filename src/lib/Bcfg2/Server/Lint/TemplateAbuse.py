@@ -26,8 +26,8 @@ class TemplateAbuse(Bcfg2.Server.Lint.ServerPlugin):
 
     def Run(self):
         if 'Cfg' in self.core.plugins:
-            for entryset in self.core.plugins['Cfg'].entries.values():
-                for entry in entryset.entries.values():
+            for entryset in list(self.core.plugins['Cfg'].entries.values()):
+                for entry in list(entryset.entries.values()):
                     if (self.HandlesFile(entry.name) and
                         any(isinstance(entry, t) for t in self.templates)):
                         self.check_template(entryset, entry)
@@ -60,7 +60,7 @@ class TemplateAbuse(Bcfg2.Server.Lint.ServerPlugin):
             return
 
         # finally, check for executable permissions in info.xml
-        for entry in entryset.entries.values():
+        for entry in list(entryset.entries.values()):
             if isinstance(entry, CfgInfoXML):
                 for pinfo in entry.infoxml.xdata.xpath("//FileInfo/Info"):
                     try:

@@ -210,7 +210,7 @@ class LdapConnection(Debuggable):
         self.conn = ldap.initialize(self.get_uri())
 
         if self.options is not None:
-            for (option, value) in self.options.items():
+            for (option, value) in list(self.options.items()):
                 self.conn.set_option(option, value)
 
         if self.binddn is not None and self.bindpw is not None:

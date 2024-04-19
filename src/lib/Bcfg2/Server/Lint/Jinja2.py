@@ -34,8 +34,8 @@ class Jinja2(Bcfg2.Server.Lint.ServerPlugin):
 
     def check_cfg(self):
         """ Check jinja2 templates in Cfg for syntax errors. """
-        for entryset in self.core.plugins['Cfg'].entries.values():
-            for entry in entryset.entries.values():
+        for entryset in list(self.core.plugins['Cfg'].entries.values()):
+            for entry in list(entryset.entries.values()):
                 if (self.HandlesFile(entry.name) and
                         isinstance(entry, CfgJinja2Generator)):
                     self.check_template(entry)

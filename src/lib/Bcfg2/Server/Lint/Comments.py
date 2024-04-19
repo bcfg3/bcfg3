@@ -180,7 +180,7 @@ class Comments(Bcfg2.Server.Lint.ServerPlugin):
     def check_bundles(self):
         """ Check bundle files for required comments. """
         if 'Bundler' in self.core.plugins:
-            for bundle in self.core.plugins['Bundler'].entries.values():
+            for bundle in list(self.core.plugins['Bundler'].entries.values()):
                 xdata = None
                 rtype = ""
                 try:
@@ -197,7 +197,7 @@ class Comments(Bcfg2.Server.Lint.ServerPlugin):
         """ Check Properties files for required comments. """
         if 'Properties' in self.core.plugins:
             props = self.core.plugins['Properties']
-            for propfile, pdata in props.entries.items():
+            for propfile, pdata in list(props.entries.items()):
                 if os.path.splitext(propfile)[1] == ".xml":
                     self.check_xml(pdata.name, pdata.xdata, 'properties')
 
@@ -243,8 +243,8 @@ class Comments(Bcfg2.Server.Lint.ServerPlugin):
         """ Check Cfg files and ``info.xml`` files for required
         comments. """
         if 'Cfg' in self.core.plugins:
-            for entryset in self.core.plugins['Cfg'].entries.values():
-                for entry in entryset.entries.values():
+            for entryset in list(self.core.plugins['Cfg'].entries.values()):
+                for entry in list(entryset.entries.values()):
                     rtype = None
                     if isinstance(entry, CfgGenshiGenerator):
                         rtype = "genshi"
@@ -265,7 +265,7 @@ class Comments(Bcfg2.Server.Lint.ServerPlugin):
     def check_probes(self):
         """ Check Probes for required comments """
         if 'Probes' in self.core.plugins:
-            for probe in self.core.plugins['Probes'].probes.entries.values():
+            for probe in list(self.core.plugins['Probes'].probes.entries.values()):
                 self.check_plaintext(probe.name, probe.data, "probes")
 
     def check_xml(self, filename, xdata, rtype):
@@ -319,21 +319,21 @@ class Comments(Bcfg2.Server.Lint.ServerPlugin):
             for line in lines:
                 # we check for both '$<keyword>:' and '$<keyword>$' to see
                 # if the keyword just hasn't been expanded
-                for (keyword, status) in found.items():
+                for (keyword, status) in list(found.items()):
                     if not status:
                         if '$%s:' % keyword in line:
                             found[keyword] = True
                         elif '$%s$' % keyword in line:
                             found[keyword] = None
 
-            unexpanded = [keyword for (keyword, status) in found.items()
+            unexpanded = [keyword for (keyword, status) in list(found.items())
                           if status is None]
             if unexpanded:
                 self.LintError("unexpanded-keywords",
                                "%s: Required keywords(s) found but not "
                                "expanded: %s" %
                                (filename, ", ".join(unexpanded)))
-            missing = [keyword for (keyword, status) in found.items()
+            missing = [keyword for (keyword, status) in list(found.items())
                        if status is False]
             if missing:
                 self.LintError("keywords-not-found",
@@ -345,11 +345,11 @@ class Comments(Bcfg2.Server.Lint.ServerPlugin):
             found = dict((k, False) for k in self.required_comments(rtype))
 
             for line in lines:
-                for (comment, status) in found.items():
+                for (comment, status) in list(found.items()):
                     if not status:
                         found[comment] = comment in line
 
-            missing = [comment for (comment, status) in found.items()
+            missing = [comment for (comment, status) in list(found.items())
                        if status is False]
             if missing:
                 self.LintError("comments-not-found",

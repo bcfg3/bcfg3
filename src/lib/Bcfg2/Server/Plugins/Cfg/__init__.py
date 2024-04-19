@@ -10,7 +10,7 @@ import Bcfg2.Options
 import Bcfg2.Server.Plugin
 from Bcfg2.Server.Plugin import PluginExecutionError
 # pylint: disable=W0622
-from Bcfg2.Compat import u_str, unicode, b64encode, any, walk_packages
+from Bcfg2.Compat import u_str, str, b64encode, any, walk_packages
 # pylint: enable=W0622
 
 try:
@@ -511,7 +511,7 @@ class CfgDefaultInfo(CfgInfo):
     __init__.__doc__ = CfgInfo.__init__.__doc__.split(".. -----")[0]
 
     def bind_info_to_entry(self, entry, _):
-        for key, value in Bcfg2.Server.Plugin.default_path_metadata().items():
+        for key, value in list(Bcfg2.Server.Plugin.default_path_metadata().items()):
             entry.attrib[key] = value
     bind_info_to_entry.__doc__ = CfgInfo.bind_info_to_entry.__doc__
 
@@ -527,7 +527,7 @@ class CfgEntrySet(Bcfg2.Server.Plugin.EntrySet):
 
     def set_debug(self, debug):
         rv = Bcfg2.Server.Plugin.EntrySet.set_debug(self, debug)
-        for entry in self.entries.values():
+        for entry in list(self.entries.values()):
             entry.set_debug(debug)
         return rv
 
@@ -648,7 +648,7 @@ class CfgEntrySet(Bcfg2.Server.Plugin.EntrySet):
             data = b64encode(data)
         else:
             try:
-                if not isinstance(data, unicode):
+                if not isinstance(data, str):
                     if not isinstance(data, str):
                         data = data.decode('utf-8')
                     data = u_str(data, Bcfg2.Options.setup.encoding)
@@ -688,7 +688,7 @@ class CfgEntrySet(Bcfg2.Server.Plugin.EntrySet):
         :returns: list of Cfg handler classes
         """
         rv = []
-        for ent in self.entries.values():
+        for ent in list(self.entries.values()):
             if (isinstance(ent, handler_type) and
                     (not ent.__specific__ or ent.specific.matches(metadata))):
                 rv.append(ent)
@@ -786,7 +786,7 @@ class CfgEntrySet(Bcfg2.Server.Plugin.EntrySet):
                 verifiers_by_class[cls] = [verifier]
             else:
                 verifiers_by_class[cls].append(verifier)
-        for verifiers in verifiers_by_class.values():
+        for verifiers in list(verifiers_by_class.values()):
             verifier = self.best_matching(metadata, verifiers)
             verifier.verify_entry(entry, metadata, data)
 

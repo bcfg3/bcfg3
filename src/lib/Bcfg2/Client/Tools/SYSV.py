@@ -71,7 +71,7 @@ class SYSV(Bcfg2.Client.Tools.PkgTool):
            string
         """
         if hasattr(self, 'origpkgtool'):
-            if len(packages) == 1 and '_sysv_pkg_path' in packages[0].keys():
+            if len(packages) == 1 and '_sysv_pkg_path' in list(packages[0].keys()):
                 self.pkgtool = (self.pkgtool[0], ('%s %s',
                                                   ['_sysv_pkg_path', 'name']))
             else:

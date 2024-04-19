@@ -127,7 +127,7 @@ class _CacheRegistry(dict):
         for :class:`Bcfg2.Server.Cache._Cache` objects that have been
         instantiated via :func:`Bcfg2.Server.Cache.Cache`. """
         tags = frozenset(tags)
-        for key in self.keys():
+        for key in list(self.keys()):
             if key.issuperset(tags) and len(key.difference(tags)) == 1:
                 yield key
 

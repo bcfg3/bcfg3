@@ -188,7 +188,7 @@ class ErrorHandler(object):
         #: A dict of registered errors
         self.errortypes = dict()
         if errors is not None:
-            self.RegisterErrors(dict(errors.items()))
+            self.RegisterErrors(dict(list(errors.items())))
 
     def RegisterErrors(self, errors):
         """ Register a dict of errors that a plugin may raise.  The
@@ -199,7 +199,7 @@ class ErrorHandler(object):
         :param errors: The error dict
         :type errors: dict
         """
-        for err, action in errors.items():
+        for err, action in list(errors.items()):
             if err not in self.errortypes:
                 if "warn" in action:
                     self.errortypes[err] = self.warn
@@ -400,9 +400,9 @@ class CLI(object):
             for plugin in self.serverplugins + self.serverlessplugins:
                 self.errorhandler.RegisterErrors(getattr(plugin, 'Errors')())
 
-            print("%-35s %-35s" % ("Error name", "Handler"))
-            for err, handler in self.errorhandler.errortypes.items():
-                print("%-35s %-35s" % (err, handler.__name__))
+            print(("%-35s %-35s" % ("Error name", "Handler")))
+            for err, handler in list(self.errorhandler.errortypes.items()):
+                print(("%-35s %-35s" % (err, handler.__name__)))
             return 0
 
         if not self.serverplugins and not self.serverlessplugins:
@@ -429,8 +429,8 @@ class CLI(object):
         if (self.errorhandler.errors or
                 self.errorhandler.warnings or
                 Bcfg2.Options.setup.verbose):
-            print("%d errors" % self.errorhandler.errors)
-            print("%d warnings" % self.errorhandler.warnings)
+            print(("%d errors" % self.errorhandler.errors))
+            print(("%d warnings" % self.errorhandler.warnings))
 
         if self.errorhandler.errors:
             return 2

@@ -7,6 +7,7 @@ import pyinotify
 from Bcfg2.Compat import reduce  # pylint: disable=W0622
 from Bcfg2.Server.FileMonitor import Event
 from Bcfg2.Server.FileMonitor.Pseudo import Pseudo
+from functools import reduce
 
 
 class Inotify(Pseudo, pyinotify.ProcessEvent):
@@ -32,7 +33,7 @@ class Inotify(Pseudo, pyinotify.ProcessEvent):
 
     #: The pyinotify event mask.  We only ask for events that are
     #: listed in :attr:`action_map`
-    mask = reduce(lambda x, y: x | y, action_map.keys())
+    mask = reduce(lambda x, y: x | y, list(action_map.keys()))
 
     def __init__(self):
         Pseudo.__init__(self)
@@ -106,7 +107,7 @@ class Inotify(Pseudo, pyinotify.ProcessEvent):
         :type ievent: pyinotify._Event
         """
         action = ievent.maskname
-        for amask, aname in self.action_map.items():
+        for amask, aname in list(self.action_map.items()):
             if ievent.mask & amask:
                 action = aname
                 break

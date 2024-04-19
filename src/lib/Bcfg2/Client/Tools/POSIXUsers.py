@@ -150,7 +150,7 @@ class POSIXUsers(Bcfg2.Client.Tools.Tool):
             for entry in self.getSupportedEntries():
                 if entry.tag == tag:
                     specified.append(entry.get("name"))
-            for name, data in self.existing[tag].items():
+            for name, data in list(self.existing[tag].items()):
                 eid = data[self.attr_mapping[tag][self.id_mapping[tag]]]
                 if name not in specified and self._in_managed_range(tag, eid):
                     extra.append(Bcfg2.Client.XML.Element(tag, name=name))
@@ -167,7 +167,7 @@ class POSIXUsers(Bcfg2.Client.Tools.Tool):
             defaults['home'] = '/root'
         else:
             defaults['home'] = '/home/%s' % entry.get('name')
-        for key, val in defaults.items():
+        for key, val in list(defaults.items()):
             if entry.get(key) is None:
                 entry.set(key, val)
         if entry.get('group') in self.existing['POSIXGroup']:
@@ -178,7 +178,7 @@ class POSIXUsers(Bcfg2.Client.Tools.Tool):
     def user_supplementary_groups(self, entry):
         """ Get a list of supplmentary groups that the user in the
         given entry is a member of """
-        return [g for g in self.existing['POSIXGroup'].values()
+        return [g for g in list(self.existing['POSIXGroup'].values())
                 if entry.get("name") in g[3] and
                 self._in_managed_range('POSIXSupGroup', g[2])]
 
@@ -221,7 +221,7 @@ class POSIXUsers(Bcfg2.Client.Tools.Tool):
             errors.append("%s %s does not exist" % (entry.tag,
                                                     entry.get("name")))
         else:
-            for attr, idx in self.attr_mapping[entry.tag].items():
+            for attr, idx in list(self.attr_mapping[entry.tag].items()):
                 val = str(self.existing[entry.tag][entry.get("name")][idx])
                 entry.set("current_%s" % attr, val)
                 if attr in ["uid", "gid"]:

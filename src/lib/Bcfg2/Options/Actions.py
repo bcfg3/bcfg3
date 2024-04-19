@@ -104,7 +104,7 @@ class ComponentAction(FinalizableAction):
     def __init__(self, *args, **kwargs):
         if self.mapping and not self.islist:
             if 'choices' not in kwargs:
-                kwargs['choices'] = self.mapping.keys()
+                kwargs['choices'] = list(self.mapping.keys())
         FinalizableAction.__init__(self, *args, **kwargs)
 
     def _import(self, module, name):

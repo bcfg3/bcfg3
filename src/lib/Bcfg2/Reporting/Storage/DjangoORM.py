@@ -392,7 +392,7 @@ class DjangoORM(StorageBase):
         inter.modified_count = counter_fields[TYPE_MODIFIED]
         inter.extra_count = counter_fields[TYPE_EXTRA]
         inter.save()
-        for entry_type in updates.keys():
+        for entry_type in list(updates.keys()):
             # batch this for sqlite
             i = 0
             while(i < len(updates[entry_type])):

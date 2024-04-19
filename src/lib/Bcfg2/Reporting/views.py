@@ -329,7 +329,7 @@ def client_detail(request, hostname=None, pk=None):
               TYPE_MODIFIED: 'modified',
               TYPE_EXTRA: 'extra'}
     edict = dict()
-    for label in etypes.values():
+    for label in list(etypes.values()):
         edict[label] = []
     for ekind in inter.entry_types:
         if ekind == 'failures':

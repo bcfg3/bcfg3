@@ -53,7 +53,7 @@ class RPCQueue(Bcfg2.Server.Plugin.Debuggable):
     def publish(self, method, args=None, kwargs=None):
         """ Publish an RPC call to the queue for consumption by all
         subscribers. """
-        for queue in self._queues.values():
+        for queue in list(self._queues.values()):
             queue.put((None, (method, args or [], kwargs or dict())))
 
     def rpc(self, dest, method, args=None, kwargs=None):
@@ -84,7 +84,7 @@ class RPCQueue(Bcfg2.Server.Plugin.Debuggable):
         """ Close queues and connections. """
         self._terminate.set()
         self.logger.debug("Closing RPC queues")
-        for name, queue in self._queues.items():
+        for name, queue in list(self._queues.items()):
             self.logger.debug("Closing RPC queue to %s" % name)
             queue.close()
 
@@ -258,7 +258,7 @@ class ChildCore(Core):
 
     def _get_rmi(self):
         rmi = dict()
-        for pname, pinst in self._get_rmi_objects().items():
+        for pname, pinst in list(self._get_rmi_objects().items()):
             for crmi in pinst.__child_rmi__:
                 if isinstance(crmi, tuple):
                     mname = crmi[1]
@@ -394,7 +394,7 @@ class MultiprocessingCore(BuiltinCore):
 
     def _get_rmi(self):
         child_rmi = dict()
-        for pname, pinst in self._get_rmi_objects().items():
+        for pname, pinst in list(self._get_rmi_objects().items()):
             for crmi in pinst.__child_rmi__:
                 if isinstance(crmi, tuple):
                     parentname, childname = crmi
@@ -404,7 +404,7 @@ class MultiprocessingCore(BuiltinCore):
                     "%s.%s" % (pname, childname)
 
         rmi = BuiltinCore._get_rmi(self)
-        for method in rmi.keys():
+        for method in list(rmi.keys()):
             if method in child_rmi:
                 rmi[method] = self._child_rmi_wrapper(method,
                                                       rmi[method],
@@ -439,7 +439,7 @@ class MultiprocessingCore(BuiltinCore):
     @exposed
     def GetConfig(self, address):
         client = self.resolve_client(address)[0]
-        childname = self.children.next()
+        childname = next(self.children)
         self.logger.debug("Building configuration for %s on %s" % (client,
                                                                    childname))
         return self.rpc_q.rpc(childname, "GetConfig", args=[client])
@@ -455,7 +455,7 @@ class MultiprocessingCore(BuiltinCore):
             "Child-1", to uniquely identify this set of statistics),
             and aggregates it with the set of running totals that are
             kept from all cores. """
-            for statname, vals in newstats.items():
+            for statname, vals in list(newstats.items()):
                 if statname.startswith("ChildCore:"):
                     statname = statname[5:]
                 if prefix:

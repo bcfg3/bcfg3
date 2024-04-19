@@ -199,7 +199,7 @@ def bruteforce_decrypt(crypted, passphrases=None, algorithm=None):
     :raises: :class:`M2Crypto.EVP.EVPError`, if the data cannot be decrypted
     """
     if passphrases is None:
-        passphrases = Bcfg2.Options.setup.passphrases.values()
+        passphrases = list(Bcfg2.Options.setup.passphrases.values())
     for passwd in passphrases:
         try:
             return ssl_decrypt(crypted, passwd, algorithm=algorithm)
@@ -278,7 +278,7 @@ class CryptoTool(object):
                                       (pname, Bcfg2.Options.setup.config))
         else:
             if len(Bcfg2.Options.setup.passphrases) == 1:
-                pname, passphrase = Bcfg2.Options.setup.passphrases.items()[0]
+                pname, passphrase = list(Bcfg2.Options.setup.passphrases.items())[0]
                 self.logger.info("Using passphrase %s" % pname)
                 return (pname, passphrase)
             elif len(Bcfg2.Options.setup.passphrases) > 1:
@@ -399,9 +399,9 @@ class PropertiesCryptoMixin(object):
                         elt.remove(child)
                 else:
                     elt = element
-                print(lxml.etree.tostring(
+                print((lxml.etree.tostring(
                     elt,
-                    xml_declaration=False).decode("UTF-8").strip())
+                    xml_declaration=False).decode("UTF-8").strip()))
                 ans = safe_input("Encrypt this element? [y/N] ")
                 if not ans.lower().startswith("y"):
                     elements.remove(element)
@@ -664,7 +664,7 @@ class CLI(object):
                     continue
             if Bcfg2.Options.setup.stdout:
                 if len(Bcfg2.Options.setup.files) > 1:
-                    print("----- %s -----" % fname)
+                    print(("----- %s -----" % fname))
                 print(data)
                 if len(Bcfg2.Options.setup.files) > 1:
                     print("")

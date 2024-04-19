@@ -74,7 +74,7 @@ def prompt(msg):
         # handle ^C
         raise SystemExit(1)
     except:
-        print("Error while reading input: %s" % sys.exc_info()[1])
+        print(("Error while reading input: %s" % sys.exc_info()[1]))
         return False
 
 
@@ -493,7 +493,7 @@ class Client(object):
                             entries[pkey] += 1
                         else:
                             entries[pkey] = 1
-        multi = [e for e, c in entries.items() if c > 1]
+        multi = [e for e, c in list(entries.items()) if c > 1]
         if multi:
             self.logger.debug("The following entries are included multiple "
                               "times:")
@@ -868,7 +868,7 @@ class Client(object):
         self.logger.info('Incorrect entries:      %d' %
                          list(self.states.values()).count(False))
         if phase == 'final' and list(self.states.values()).count(False):
-            for entry in sorted(self.states.keys(), key=lambda e: e.tag + ":" +
+            for entry in sorted(list(self.states.keys()), key=lambda e: e.tag + ":" +
                                 e.get('name')):
                 if not self.states[entry]:
                     etype = entry.get('type')

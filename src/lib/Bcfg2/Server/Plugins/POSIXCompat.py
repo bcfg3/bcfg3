@@ -24,5 +24,5 @@ class POSIXCompat(Bcfg2.Server.Plugin.Plugin,
 
         for goal in goals:
             for entry in goal.getchildren():
-                if entry.tag == 'Path' and 'mode' in entry.keys():
+                if entry.tag == 'Path' and 'mode' in list(entry.keys()):
                     entry.set('perms', entry.get('mode'))

@@ -288,7 +288,7 @@ class Properties(Bcfg2.Server.Plugin.Plugin,
 
     def get_additional_data(self, metadata):
         rv = dict()
-        for fname, pfile in self.entries.items():
+        for fname, pfile in list(self.entries.items()):
             rv[fname] = pfile.get_additional_data(metadata)
         return rv
     get_additional_data.__doc__ = \

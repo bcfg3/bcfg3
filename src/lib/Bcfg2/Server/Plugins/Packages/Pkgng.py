@@ -87,10 +87,10 @@ class PkgngSource(Source):
                 self.logger.error("Packages: Failed to read file %s" % fname)
                 raise
             for line in packagesite.readlines():
-                pkg = json.loads(unicode(line, errors='ignore'))
+                pkg = json.loads(str(line, errors='ignore'))
                 pkgname = pkg['name']
                 self.pkgnames.add(pkgname)
                 if 'deps' in pkg:
-                    bdeps[barch][pkgname] = pkg['deps'].keys()
+                    bdeps[barch][pkgname] = list(pkg['deps'].keys())
         self.process_files(bdeps, dict())
     read_files.__doc__ = Source.read_files.__doc__

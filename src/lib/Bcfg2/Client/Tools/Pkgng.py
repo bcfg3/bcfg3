@@ -64,7 +64,7 @@ class Pkgng(Bcfg2.Client.Tools.Tool):
     def FindExtra(self):
         """Find extra packages."""
         packages = [entry.get('name') for entry in self.getSupportedEntries()]
-        extras = [(name, value) for (name, value) in self.pkg_cache.items()
+        extras = [(name, value) for (name, value) in list(self.pkg_cache.items())
                   if name not in packages]
         return [Bcfg2.Client.XML.Element('Package', name=name, type='pkgng',
                                          current_version=version)
