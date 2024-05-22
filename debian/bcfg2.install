@@ -1,5 +1,7 @@
 debian/tmp/usr/bin/bcfg2	usr/sbin
 debian/tmp/usr/lib/python*/*-packages/Bcfg2/*.py
+usr/lib/python*/*-packages/Bcfg2/__pycache__/*.pyc
+usr/lib/python*/*-packages/Bcfg2-*
 debian/tmp/usr/lib/python*/*-packages/Bcfg2/Client/*
 debian/tmp/usr/lib/python*/*-packages/Bcfg2/Options/*
 debian/tmp/usr/share/man/man1/*
