@@ -24,7 +24,7 @@ Homepage: http://bcfg2.org/
 
 Package: bcfg2
 Architecture: all
-Depends: ${python3:Depends}, ${misc:Depends}, debsums, python3-apt (>= 0.7.91), ucf, lsb-base (>= 3.1-9), python3
+Depends: ${python3:Depends}, ${misc:Depends}, debsums, python3-apt (>= 0.7.91), ucf, lsb-base (>= 3.1-9), python3, lsb-release, net-tools
 Description: Configuration management client
  Bcfg2 is a configuration management system that generates configuration sets
  for clients bound by client profiles.
