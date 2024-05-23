@@ -907,6 +907,7 @@ if HAS_DJANGO:
 
     class DBShell(_DjangoProxyCmd):
         """ Call the Django 'dbshell' command on the database """
+        kwargs = {'database': 'Reporting'}
 
     class Shell(_DjangoProxyCmd):
         """ Call the Django 'shell' command on the database """
@@ -914,6 +915,11 @@ if HAS_DJANGO:
     class ValidateDB(_DjangoProxyCmd):
         """ Call the Django 'validate' command on the database """
         command = "validate"
+
+    class Migrate(_DjangoProxyCmd):
+        """ Call the Django 'migrate' command on the database """
+        command = "migrate"
+        kwargs = {'database': 'Reporting'}
 
     class Syncdb(AdminCmd):
         """ Sync the Django ORM with the configured database """
@@ -932,16 +938,9 @@ if HAS_DJANGO:
                 self.logger.error("Database update failed: %s" % err)
                 raise SystemExit(1)
 
-    if django.VERSION[0] == 1 and django.VERSION[1] >= 7:
-        class Makemigrations(_DjangoProxyCmd):
-            """ Call the 'makemigrations' command on the database """
-            args = ['Reporting']
-
-    else:
-        class Schemamigration(_DjangoProxyCmd):
-            """ Call the South 'schemamigration' command on the database """
-            args = ['Bcfg2.Reporting']
-            kwargs = {'auto': True}
+    class Makemigrations(_DjangoProxyCmd):
+        """ Call the 'makemigrations' command on the database """
+        args = ['Reporting']
 
 
 if HAS_REPORTS:
