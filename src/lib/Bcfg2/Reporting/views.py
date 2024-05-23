@@ -11,8 +11,7 @@ from django.template import Context
 from django.http import \
         HttpResponse, HttpResponseRedirect, HttpResponseServerError, Http404
 from django.shortcuts import render, get_object_or_404
-from django.core.urlresolvers import \
-        resolve, reverse, Resolver404, NoReverseMatch
+from django.urls import resolve, reverse, Resolver404, NoReverseMatch
 from django.db import DatabaseError
 from django.db.models import Q, Count
 

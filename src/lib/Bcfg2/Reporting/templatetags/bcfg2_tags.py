@@ -4,8 +4,7 @@ from copy import copy
 import django
 from django import template
 from django.conf import settings
-from django.core.urlresolvers import resolve, reverse, \
-                                     Resolver404, NoReverseMatch
+from django.urls import resolve, reverse, Resolver404, NoReverseMatch
 from django.utils.encoding import smart_str
 from django.utils.safestring import mark_safe
 from datetime import datetime, timedelta
