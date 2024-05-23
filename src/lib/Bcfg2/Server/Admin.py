@@ -30,14 +30,7 @@ try:
     import Bcfg2.Server.models
 
     HAS_DJANGO = True
-    if django.VERSION[0] == 1 and django.VERSION[1] >= 7:
-        HAS_REPORTS = True
-    else:
-        try:
-            import south  # pylint: disable=W0611
-            HAS_REPORTS = True
-        except ImportError:
-            HAS_REPORTS = False
+    HAS_REPORTS = True
 except ImportError:
     HAS_DJANGO = False
     HAS_REPORTS = False

@@ -87,11 +87,8 @@ def close_db_connection(func):
             self.logger.debug("%s: Closing database connection" %
                               threading.current_thread().getName())
 
-            if django.VERSION[0] == 1 and django.VERSION[1] >= 7:
-                for connection in django.db.connections.all():
-                    connection.close()
-            else:
-                django.db.close_connection()  # pylint: disable=E1101
+            for connection in django.db.connections.all():
+                connection.close()
         return rv
 
     return inner

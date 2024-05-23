@@ -395,11 +395,7 @@ class SortLinkNode(template.Node):
         self.text = template.Variable(text)
 
     def _render_template(self, context):
-        if django.VERSION[0] == 1 and django.VERSION[1] >= 8:
-            return context.template.engine.from_string(self.__TMPL__)
-        else:
-            from django.template.loader import get_template_from_string
-            return get_template_from_string(self.__TMPL__).render(context)
+        return context.template.engine.from_string(self.__TMPL__)
 
     def render(self, context):
         try:

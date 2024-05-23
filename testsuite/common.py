@@ -226,21 +226,15 @@ class DBModelTestCase(Bcfg2TestCase):
             dbfile = django.conf.settings.DATABASES['default']['NAME']
 
             # Close all connections to the old database
-            if django.VERSION[0] == 1 and django.VERSION[1] >= 7:
-                for connection in django.db.connections.all():
-                    connection.close()
-            else:
-                django.db.close_connection()
-            
+            for connection in django.db.connections.all():
+                connection.close()
+
             # Remove old database
             if os.path.exists(dbfile):
                 os.unlink(dbfile)
             self.assertFalse(os.path.exists(dbfile))
 
             # Create new
-            if django.VERSION[0] == 1 and django.VERSION[1] < 7:
-                django.core.management.call_command('syncdb', interactive=False,
-                                                    verbosity=1)
             django.core.management.call_command('migrate', interactive=False,
                                                 verbosity=1)
 

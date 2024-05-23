@@ -11,11 +11,7 @@ from Bcfg2.Server.Plugin import Statistics, PullSource, Threaded, \
 
 try:
     import django
-    if django.VERSION[0] == 1 and django.VERSION[1] >= 7:
-        HAS_REPORTING = True
-    else:
-        import south  # pylint: disable=W0611
-        HAS_REPORTING = True
+    HAS_REPORTING = True
 except ImportError:
     HAS_REPORTING = False
 

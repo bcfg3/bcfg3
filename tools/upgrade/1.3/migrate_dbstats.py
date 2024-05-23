@@ -29,15 +29,7 @@ def _quote(value):
     """
     global _our_backend
     if not _our_backend:
-        if django.VERSION[0] == 1 and django.VERSION[1] >= 7:
-            _our_backend = connections[get_db_label('Reporting')].ops
-        else:
-            from django.db import backend
-            try:
-                _our_backend = backend.DatabaseOperations(
-                    connections[get_db_label('Reporting')])
-            except TypeError:
-                _our_backend = backend.DatabaseOperations()
+        _our_backend = connections[get_db_label('Reporting')].ops
     return _our_backend.quote_name(value)
 
 
