@@ -297,7 +297,7 @@ class Group(models.Model):
     groups = models.ManyToManyField("self", symmetrical=False)
     bundles = models.ManyToManyField("Bundle")
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:
@@ -319,7 +319,7 @@ class Bundle(models.Model):
 
     name = models.CharField(max_length=255, unique=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     class Meta:

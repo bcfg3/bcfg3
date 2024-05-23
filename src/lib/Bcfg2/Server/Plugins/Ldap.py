@@ -266,7 +266,7 @@ class LdapQuery(object):
     connection = None
     result = None
 
-    def __unicode__(self):
+    def __str__(self):
         return "LdapQuery: %s" % self.name
 
     def is_applicable(self, metadata):  # pylint: disable=W0613
