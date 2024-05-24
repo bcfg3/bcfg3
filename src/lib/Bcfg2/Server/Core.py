@@ -433,9 +433,9 @@ class Core(object):
             err = sys.exc_info()[1]
             self.logger.error("Failed to add a file monitor while "
                               "instantiating plugin %s: %s" % (plugin, err))
-        except:
+        except Exception as e:
             self.logger.error("Unexpected instantiation failure for plugin %s"
-                              % plugin, exc_info=1)
+                              % plugin, exc_info=e)
 
     @close_db_connection
     def shutdown(self):
