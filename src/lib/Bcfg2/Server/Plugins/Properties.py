@@ -183,7 +183,7 @@ class XMLPropertyFile(Bcfg2.Server.Plugin.StructFile, PropertyFile):
         open(self.name, "wb").write(
             lxml.etree.tostring(self.xdata,
                                 xml_declaration=False,
-                                pretty_print=True).decode('UTF-8'))
+                                pretty_print=True))
         return True
 
     def validate_data(self):
