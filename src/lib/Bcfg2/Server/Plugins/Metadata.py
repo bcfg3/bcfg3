@@ -558,7 +558,12 @@ class Metadata(Bcfg2.Server.Plugin.Metadata,
         self.cache = Cache("Metadata")
         self.default = None
         self.pdirty = False
-        self.password = Bcfg2.Options.setup.password
+
+        try:
+            self.password = Bcfg2.Options.setup.password
+        except AttributeError as e:
+            pass
+
         self.query = MetadataQuery(core.build_metadata,
                                    self.list_clients,
                                    self.get_client_names_by_groups,
