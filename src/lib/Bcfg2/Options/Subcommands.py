@@ -192,6 +192,9 @@ class CommandRegistry(object):
         subcommand. """
         _debug("Running subcommand %s" % master_setup.subcommand)
         try:
+            if not master_setup.subcommand:
+                return
+
             return self.commands[master_setup.subcommand].run(master_setup)
         finally:
             self.shutdown()
@@ -203,6 +206,9 @@ class CommandRegistry(object):
         run.
         """
         _debug("Shutting down subcommand %s" % master_setup.subcommand)
+        if not master_setup.subcommand:
+            return
+
         self.commands[master_setup.subcommand].shutdown()
 
     def register_command(self, cls_or_obj):

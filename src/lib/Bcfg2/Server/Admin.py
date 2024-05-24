@@ -1216,15 +1216,19 @@ class CLI(Bcfg2.Options.CommandRegistry):
     def __init__(self):
         Bcfg2.Options.CommandRegistry.__init__(self)
         self.register_commands(list(globals().values()), parent=AdminCmd)
-        parser = Bcfg2.Options.get_parser(
+        self.parser = Bcfg2.Options.get_parser(
             description="Manage a running Bcfg2 server",
             components=[self])
-        parser.add_options(self.subcommand_options)
-        parser.parse()
+        self.parser.add_options(self.subcommand_options)
+        self.parser.parse()
 
     def run(self):
         """ Run bcfg2-admin """
         try:
+            if not Bcfg2.Options.setup.subcommand:
+                self.parser.print_help()
+                return
+
             cmd = self.commands[Bcfg2.Options.setup.subcommand]
             if hasattr(cmd, 'setup'):
                 cmd.setup()
