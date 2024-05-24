@@ -351,7 +351,7 @@ class ProbeData(str):  # pylint: disable=E0012,R0924
         """ The probe data as a decoded YAML data structure """
         if self._yaml is None and HAS_YAML:
             try:
-                self._yaml = yaml.load(self.data)
+                self._yaml = yaml.safe_load(self.data)
             except yaml.YAMLError:
                 pass
         return self._yaml
