@@ -201,6 +201,8 @@ class XMLRPCRequestHandler(SimpleXMLRPCServer.SimpleXMLRPCRequestHandler):
     def authenticate(self):
         try:
             header = self.headers['Authorization']
+            if not header:
+                raise KeyError
         except KeyError:
             self.logger.error("No authentication data presented")
             return False
