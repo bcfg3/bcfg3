@@ -121,7 +121,7 @@ class Debconf(Bcfg2.Client.Tools.Tool):
             values = self.cmd.run(['/usr/bin/debconf-show'] + owners)
             for line in values.stdout.splitlines():
                 if len(line) > 2 and line[0] == '*':
-                    (name, current_value) = line[2:].split(':', 2)
+                    (name, current_value) = line[2:].split(':', 1)
                     if name not in specified and name not in extra:
                         extra[name] = Bcfg2.Client.XML.Element(
                             'Conf', name=name, type='debconf',
