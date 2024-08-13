@@ -234,8 +234,8 @@ class XMLRPCRequestHandler(SimpleXMLRPCServer.SimpleXMLRPCRequestHandler):
                 self.logger.error("Authentication Failure")
                 self.send_error(401, self.responses[401][0])
                 return False
-        except:  # pylint: disable=W0702
-            self.logger.error("Unexpected Authentication Failure", exc_info=1)
+        except Exception as e:  # pylint: disable=W0702
+            self.logger.error("Unexpected Authentication Failure", exc_info=e)
             self.send_error(401, self.responses[401][0])
             return False
         return True

@@ -193,10 +193,10 @@ class Core(object):
             #: object used by the core to monitor for Bcfg2 data
             #: changes.
             self.fam = Bcfg2.Server.FileMonitor.get_fam()
-        except IOError:
+        except IOError as e:
             msg = "Failed to instantiate fam driver %s" % \
                 Bcfg2.Options.setup.filemonitor
-            self.logger.error(msg, exc_info=1)
+            self.logger.error(msg, exc_info=e)
             raise CoreInitError(msg)
 
         #: Path to bcfg2.conf
@@ -426,9 +426,9 @@ class Core(object):
         self.plugin_blacklist[plugin.name] = cplugs
         try:
             self.plugins[plugin.name] = plugin(self)
-        except PluginInitError:
+        except PluginInitError as e:
             self.logger.error("Failed to instantiate plugin %s" % plugin,
-                              exc_info=1)
+                              exc_info=e)
         except OSError:
             err = sys.exc_info()[1]
             self.logger.error("Failed to add a file monitor while "
@@ -523,9 +523,9 @@ class Core(object):
                 self.logger.error("Plugin %s structure validation failed: %s" %
                                   (plugin.name, err))
                 raise
-            except:
+            except Exception as e:
                 self.logger.error("Plugin %s: unexpected structure validation "
-                                  "failure" % plugin.name, exc_info=1)
+                                  "failure" % plugin.name, exc_info=e)
 
     @track_statistics()
     def validate_goals(self, metadata, data):
@@ -549,9 +549,9 @@ class Core(object):
                 self.logger.error("Plugin %s goal validation failed: %s" %
                                   (plugin.name, err.message))
                 raise
-            except:
+            except Exception as e:
                 self.logger.error("Plugin %s: unexpected goal validation "
-                                  "failure" % plugin.name, exc_info=1)
+                                  "failure" % plugin.name, exc_info=e)
 
     @track_statistics()
     def GetStructures(self, metadata):
@@ -591,8 +591,8 @@ class Core(object):
             try:
                 self.BindStructure(astruct, metadata)
                 config.append(astruct)
-            except:
-                self.logger.error("error in BindStructure", exc_info=1)
+            except Exception as e:
+                self.logger.error("error in BindStructure", exc_info=e)
 
     @track_statistics()
     def BindStructure(self, structure, metadata):
@@ -698,8 +698,8 @@ class Core(object):
 
         try:
             structures = self.GetStructures(meta)
-        except:
-            self.logger.error("Error in GetStructures", exc_info=1)
+        except Exception as e:
+            self.logger.error("Error in GetStructures", exc_info=e)
             return lxml.etree.Element("error", type='structure error')
 
         self.validate_structures(meta, structures)
@@ -822,9 +822,9 @@ class Core(object):
         for plugin in self.plugins_by_type(Decision):
             try:
                 result.extend(plugin.GetDecisions(metadata, mode))
-            except:
+            except Exception as e:
                 self.logger.error("Plugin: %s failed to generate decision list"
-                                  % plugin.name, exc_info=1)
+                                  % plugin.name, exc_info=e)
         return result
 
     @track_statistics()
@@ -966,10 +966,10 @@ class Core(object):
             for plugin in self.plugins_by_type(Statistics):
                 try:
                     plugin.process_statistics(meta, statistics)
-                except:
+                except Exception as e:
                     self.logger.error("Plugin %s failed to process stats from "
                                       "%s" % (plugin.name, meta.hostname),
-                                      exc_info=1)
+                                      exc_info=e)
 
         self.logger.info("Client %s reported state %s" % (client_name,
                                                           state.get('state')))
