@@ -612,7 +612,7 @@ class Core(object):
                 continue
             try:
                 self.Bind(entry, metadata)
-            except:
+            except Exception as e:
                 exc = sys.exc_info()[1]
                 if 'failure' not in entry.attrib:
                     entry.set('failure', 'bind error: %s' % exc)
@@ -621,7 +621,7 @@ class Core(object):
                 else:
                     msg = "Unexpected failure binding entry"
                 self.logger.error("%s %s:%s: %s" %
-                                  (msg, entry.tag, entry.get('name'), exc))
+                                  (msg, entry.tag, entry.get('name'), exc), exc_info=e)
 
     def Bind(self, entry, metadata):
         """ Bind a single entry using the appropriate generator.
