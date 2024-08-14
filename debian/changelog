@@ -1,8 +1,8 @@
-bcfg2 (1.4.0pre2-0.1+spline8) UNRELEASED; urgency=medium
+bcfg2 (1.4.0pre2-0.1+spline8) bookworm; urgency=medium
 
   * Add various python3 compatibility fixes
 
- -- Jonah Brüchert <jbb@kaidan.im>  Sat, 25 May 2024 03:54:36 +0200
+ -- Jonah Brüchert <jbb@kaidan.im>  Wed, 14 Aug 2024 03:13:25 +0200
 
 bcfg2 (1.4.0pre2-0.1+spline7) bookworm; urgency=medium
 
