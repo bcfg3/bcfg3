@@ -125,7 +125,8 @@ def finalize_django_config(opts=None, silent=False):
             HOST=opts.db_host,
             PORT=opts.db_port,
             OPTIONS=opts.db_opts,
-            SCHEMA=opts.db_schema))
+            SCHEMA=opts.db_schema,
+            CONN_MAX_AGE=0))
 
     if (hasattr(opts, "reporting_db_engine") and
             opts.reporting_db_engine is not None):
@@ -137,7 +138,8 @@ def finalize_django_config(opts=None, silent=False):
             HOST=opts.reporting_db_host,
             PORT=opts.reporting_db_port,
             OPTIONS=opts.reporting_db_opts,
-            SCHEMA=opts.reporting_db_schema)
+            SCHEMA=opts.reporting_db_schema,
+            CONN_MAX_AGE=0)
 
     settings['TIME_ZONE'] = opts.time_zone
 
