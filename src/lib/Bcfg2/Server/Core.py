@@ -82,13 +82,12 @@ def close_db_connection(func):
     @wraps(func)
     def inner(self, *args, **kwargs):
         """ The decorated function """
-        rv = func(self, *args, **kwargs)
-        if self._database_available:  # pylint: disable=W0212
+        if self._database_available:
             self.logger.debug("%s: Closing database connection" %
                               threading.current_thread().getName())
+            django.db.close_old_connections()
 
-            for connection in django.db.connections.all():
-                connection.close()
+        rv = func(self, *args, **kwargs)
         return rv
 
     return inner
@@ -278,6 +277,9 @@ class Core(object):
                 self.logger.error("Updating database %s failed: %s" %
                                   (Bcfg2.Options.setup.db_name,
                                    sys.exc_info()[1]))
+        else:
+            self.logger.warning("Missing Django, the database can "
+                                "not be used.")
 
     def __str__(self):
         return self.__class__.__name__
