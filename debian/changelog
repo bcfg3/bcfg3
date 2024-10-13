@@ -1,3 +1,11 @@
+bcfg2 (1.4.0pre2-0.1+spline9) bookworm; urgency=medium
+
+  * Add pyapt source type to schema
+  * reporting: Fix another case of a broken django version check
+  * Reporting: Make bcfg2 logo link to grid
+
+ -- Jonah Brüchert <jbb@kaidan.im>  Sun, 13 Oct 2024 15:40:07 +0200
+
 bcfg2 (1.4.0pre2-0.1+spline8) bookworm; urgency=medium
 
   * Add various python3 compatibility fixes
