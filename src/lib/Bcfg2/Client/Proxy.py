@@ -232,10 +232,12 @@ class SSLHTTPConnection(httplib.HTTPConnection):
             self.key = None
 
         rawsock.settimeout(self.timeout)
-        self.sock = ssl.wrap_socket(rawsock, cert_reqs=other_side_required,
-                                    ca_certs=self.ca, suppress_ragged_eofs=True,
-                                    keyfile=self.key, certfile=self.cert,
-                                    ssl_version=ssl_protocol_ver)
+        ctx = ssl.SSLContext(ssl_protocol_ver)
+        if self.cert:
+            ctx.load_cert_chain(self.cert, keyfile=self.key)
+            ctx.verify_mode = self.ca
+            ctx.check_hostname = other_side_required
+        self.sock = ctx.wrap_socket(rawsock, suppress_ragged_eofs=True)
         self.sock.connect((self.host, self.port))
         peer_cert = self.sock.getpeercert()
         if peer_cert and self.scns:
