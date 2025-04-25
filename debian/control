@@ -7,10 +7,8 @@ Build-Depends: debhelper (>= 11),
                debhelper-compat (= 13),
 	       python3 (>= 2.6),
 	       python3-setuptools,
-	       python3-sphinx (>= 1.0.7+dfsg) | python3-sphinx,
 	       python3-lxml,
 	       python3-daemon,
-	       python3-boto,
 	       python3-cherrypy3,
 	       python3-genshi,
 	       python3-pyinotify,
@@ -18,7 +16,7 @@ Build-Depends: debhelper (>= 11),
 	       python3-doc,
 	       python3-mock,
 	       python3-pip,
-	       python3-nose,
+	       python3-nose2,
 	       dh-python
 Standards-Version: 4.7
 Homepage: http://bcfg2.org/
@@ -61,12 +59,3 @@ Description: Configuration management helper package
  for clients bound by client profiles.
  bcfg2-utils contains scripts for gethering useful information for config
  creation.
-
-Package: bcfg2-doc
-Section: doc
-Architecture: all
-Depends: ${sphinxdoc:Depends}, ${misc:Depends}
-Description: Configuration management system documentation
- Bcfg2 is a configuration management system that generates configuration sets
- for clients bound by client profiles.
- bcfg2-doc is the documentation for bcfg2.
