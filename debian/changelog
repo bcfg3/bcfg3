@@ -1,3 +1,9 @@
+bcfg2 (1.4.0pre2-0.1+spline10) trixie; urgency=medium
+
+  * Build on trixie
+
+ -- Jonah Brüchert <jbb@kaidan.im>  Fri, 25 Apr 2025 22:56:21 +0200
+
 bcfg2 (1.4.0pre2-0.1+spline9) bookworm; urgency=medium
 
   * Add pyapt source type to schema
