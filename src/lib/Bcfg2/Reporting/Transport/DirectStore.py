@@ -44,7 +44,7 @@ class DirectStore(TransportBase, threading.Thread):
             self.logger.warning("Reporting: Failed to load saved data, "
                                 "DirectStore thread exiting")
             return
-        while not self.terminate.isSet() and self.queue is not None:
+        while not self.terminate.is_set() and self.queue is not None:
             try:
                 interaction = self.queue.get(block=True,
                                              timeout=self.timeout)
@@ -119,7 +119,7 @@ class DirectStore(TransportBase, threading.Thread):
             return False
         for interaction in saved_data:
             # check that shutdown wasnt called early
-            if self.terminate.isSet():
+            if self.terminate.is_set():
                 self.logger.warning("Reporting: Shutdown called while loading "
                                     " saved data")
                 return False

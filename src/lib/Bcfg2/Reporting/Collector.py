@@ -158,7 +158,7 @@ class ReportingCollector(object):
 
         self.transport.start_monitor(self)
 
-        while not self.terminate.isSet():
+        while not self.terminate.is_set():
             try:
                 interaction = self.transport.fetch()
                 if not interaction:
