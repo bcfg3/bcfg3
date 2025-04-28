@@ -84,7 +84,7 @@ def close_db_connection(func):
         """ The decorated function """
         if self._database_available:
             self.logger.debug("%s: Closing database connection" %
-                              threading.current_thread().getName())
+                              threading.current_thread().name)
             django.db.close_old_connections()
 
         rv = func(self, *args, **kwargs)
@@ -308,9 +308,9 @@ class Core(object):
         """ The thread that periodically logs performance statistics
         to syslog. """
         self.logger.debug("Performance logging thread starting")
-        while not self.terminate.isSet():
+        while not self.terminate.is_set():
             self.terminate.wait(Bcfg2.Options.setup.performance_interval)
-            if not self.terminate.isSet():
+            if not self.terminate.is_set():
                 for name, stats in list(self.get_statistics(None).items()):
                     self.logger.info("Performance statistics: "
                                      "%s min=%.06f, max=%.06f, average=%.06f, "
@@ -325,13 +325,13 @@ class Core(object):
         self.logger.debug("File monitor thread starting")
         famfd = self.fam.fileno()
         terminate = self.terminate
-        while not terminate.isSet():
+        while not terminate.is_set():
             if famfd:
                 select.select([famfd], [], [], 2)
             elif not self.fam.pending():
                 terminate.wait(15)
 
-            if self.terminate.isSet():
+            if self.terminate.is_set():
                 break
 
             if self.fam.pending():
@@ -446,7 +446,7 @@ class Core(object):
             self.logger.debug("%s: Core already shut down" % self.name)
             return
         self.logger.info("%s: Shutting down core..." % self.name)
-        if not self.terminate.isSet():
+        if not self.terminate.is_set():
             self.terminate.set()
         self._running = False
         self.fam.shutdown()
