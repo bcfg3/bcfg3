@@ -1,7 +1,8 @@
 """ A plugin to provide helper classes and functions to templates """
 
 import re
-import imp
+import importlib.util
+import importlib.machinery
 import sys
 import lxml.etree
 from Bcfg2.Server.Plugin import Plugin, Connector, DirectoryBacked, \
@@ -10,6 +11,17 @@ from Bcfg2.Logger import Debuggable
 from Bcfg2.Utils import safe_module_name
 
 MODULE_RE = re.compile(r'(?P<filename>(?P<module>[^\/]+)\.py)$')
+
+
+def load_source(modname, filename):
+    loader = importlib.machinery.SourceFileLoader(modname, filename)
+    spec = importlib.util.spec_from_file_location(modname, filename, loader=loader)
+    module = importlib.util.module_from_spec(spec)
+    # The module is always executed and not cached in sys.modules.
+    # Uncomment the following line to cache the module.
+    # sys.modules[module.__name__] = module
+    loader.exec_module(module)
+    return module
 
 
 class HelperModule(Debuggable):
@@ -50,7 +62,7 @@ class HelperModule(Debuggable):
             self.core.metadata_cache.expire()
 
         try:
-            module = imp.load_source(
+            module = load_source(
                 safe_module_name('TemplateHelper', self._module_name),
                 self.name)
         except:  # pylint: disable=W0702
