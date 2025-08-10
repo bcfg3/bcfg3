@@ -1,3 +1,9 @@
+bcfg2 (1.4.0pre2+spline11) trixie; urgency=medium
+
+  * Fix running bcfg2-server and reporting on Python 3.13 and Django 4.
+
+ -- Jonah Brüchert <jbb@kaidan.im>  Sun, 10 Aug 2025 17:52:20 +0200
+
 bcfg2 (1.4.0pre2-0.1+spline10) trixie; urgency=medium
 
   * Build on trixie
