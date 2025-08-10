@@ -1,5 +1,5 @@
-from Bcfg2.Reporting.Compat import url, patterns  # django compat imports
-from django.urls import reverse, NoReverseMatch
+from Bcfg2.Reporting.Compat import patterns  # django compat imports
+from django.urls import reverse, re_path, NoReverseMatch
 from django.http import HttpResponsePermanentRedirect
 from Bcfg2.Reporting.utils import filteredUrls, paginatedUrls, timeviewUrls
 from Bcfg2.Reporting import views
@@ -16,12 +16,12 @@ def newRoot(request):
 urlpatterns = patterns('',
     (r'^$', newRoot),
 
-    url(r'^manage/?$', views.client_manage, name='reports_client_manage'),
-    url(r'^client/(?P<hostname>[^/]+)/(?P<pk>\d+)/?$', views.client_detail, name='reports_client_detail_pk'),
-    url(r'^client/(?P<hostname>[^/]+)/?$', views.client_detail, name='reports_client_detail'),
-    url(r'^element/(?P<entry_type>\w+)/(?P<pk>\d+)/(?P<interaction>\d+)?/?$', views.config_item, name='reports_item'),
-    url(r'^element/(?P<entry_type>\w+)/(?P<pk>\d+)/?$', views.config_item, name='reports_item'),
-    url(r'^entry/(?P<entry_type>\w+)/(?P<pk>\w+)/?$', views.entry_status, name='reports_entry'),
+    re_path(r'^manage/?$', views.client_manage, name='reports_client_manage'),
+    re_path(r'^client/(?P<hostname>[^/]+)/(?P<pk>\d+)/?$', views.client_detail, name='reports_client_detail_pk'),
+    re_path(r'^client/(?P<hostname>[^/]+)/?$', views.client_detail, name='reports_client_detail'),
+    re_path(r'^element/(?P<entry_type>\w+)/(?P<pk>\d+)/(?P<interaction>\d+)?/?$', views.config_item, name='reports_item'),
+    re_path(r'^element/(?P<entry_type>\w+)/(?P<pk>\d+)/?$', views.config_item, name='reports_item'),
+    re_path(r'^entry/(?P<entry_type>\w+)/(?P<pk>\w+)/?$', views.entry_status, name='reports_entry'),
 )
 
 urlpatterns += patterns('',
