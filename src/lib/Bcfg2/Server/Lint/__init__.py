@@ -329,7 +329,7 @@ class LintPluginOption(Bcfg2.Options.Option):
             try:
                 module_name = 'Bcfg2.Server.Lint.%s' % name
                 module = loader \
-                    .find_module(module_name) \
+                    .find_spec(module_name).loader \
                     .load_module(module_name)
                 plugin = getattr(module, name)
                 if plugin.__serverplugin__ is None or \
