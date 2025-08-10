@@ -235,8 +235,8 @@ class SSLHTTPConnection(httplib.HTTPConnection):
         ctx = ssl.SSLContext(ssl_protocol_ver)
         if self.cert:
             ctx.load_cert_chain(self.cert, keyfile=self.key)
-            ctx.verify_mode = self.ca
-            ctx.check_hostname = other_side_required
+            ctx.load_verify_locations(self.ca)
+            ctx.options = other_side_required
         self.sock = ctx.wrap_socket(rawsock, suppress_ragged_eofs=True)
         self.sock.connect((self.host, self.port))
         peer_cert = self.sock.getpeercert()
