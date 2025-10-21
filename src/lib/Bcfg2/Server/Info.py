@@ -7,7 +7,7 @@ import cmd
 import math
 import time
 import copy
-import pipes
+import shlex
 import fnmatch
 import argparse
 import operator
@@ -817,7 +817,7 @@ if HAS_PROFILE:
         def run(self, setup):
             prof = profile.Profile()
             cls = self.core.commands[setup.command]
-            prof.runcall(cls, " ".join(pipes.quote(a) for a in setup.args))
+            prof.runcall(cls, " ".join(shlex.quote(a) for a in setup.args))
             display_trace(prof)
 
 

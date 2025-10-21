@@ -1,7 +1,7 @@
 """ Trigger is a plugin that calls external scripts (on the server) """
 
 import os
-import pipes
+import shlex
 import Bcfg2.Server.Plugin
 from Bcfg2.Utils import Executor
 
@@ -33,7 +33,7 @@ class Trigger(Bcfg2.Server.Plugin.Plugin,
         else:
             dpid = os.fork()
             if not dpid:
-                self.debug_log("Running %s" % " ".join(pipes.quote(a)
+                self.debug_log("Running %s" % " ".join(shlex.quote(a)
                                                        for a in args))
                 result = self.cmd.run(args)
                 if not result.success:
