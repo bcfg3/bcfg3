@@ -395,7 +395,7 @@ class SortLinkNode(template.Node):
         self.text = template.Variable(text)
 
     def _render_template(self, context):
-        return context.template.engine.from_string(self.__TMPL__)
+        return context.template.engine.from_string(self.__TMPL__).render(context)
 
     def render(self, context):
         try:
