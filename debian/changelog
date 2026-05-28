@@ -1,3 +1,9 @@
+bcfg2 (1.4.0pre2+spline12) trixie; urgency=medium
+
+  * Fix detailed reporting view
+
+ -- Jonah Brüchert <jbb@kaidan.im>  Thu, 28 May 2026 02:03:09 +0200
+
 bcfg2 (1.4.0pre2+spline11) trixie; urgency=medium
 
   * Fix running bcfg2-server and reporting on Python 3.13 and Django 4.
