@@ -1,6 +1,9 @@
 """ APT backend for :mod:`Bcfg2.Server.Plugins.Packages` """
 
 import re
+from io import StringIO
+from debian import deb822
+
 from Bcfg2.Server.Plugins.Packages.Collection import Collection
 from Bcfg2.Server.Plugins.Packages.Source import Source
 
@@ -34,31 +37,48 @@ class AptCollection(Collection):
     __init__.__doc__ = Collection.__init__.__doc__.split(".. -----")[0]
 
     def get_config(self):
-        """ Get an APT configuration file (i.e., ``sources.list``).
+        """ Get an APT configuration file (i.e., ``*.sources``).
 
-        :returns: string """
-        lines = ["# This config was generated automatically by the Bcfg2 "
-                 "Packages plugin", '']
+        :returns: string
+        """
+        config = StringIO()
+        config.write(
+            "# This config was generated automatically by the Bcfg2 "
+            "Packages plugin\n\n"
+        )
 
         for source in self:
             if source.rawurl:
-                if source.rawurl[-1] != '/':
-                    source.rawurl = source.rawurl + "/"
-                index = source.rawurl.rfind("/", 0, -1)
-                lines.append("deb %s %s" %
-                             (source.rawurl[:index],
-                              source.rawurl[index + 1:]))
-            else:
-                lines.append("deb %s %s %s" % (source.url, source.version,
-                                               " ".join(source.components)))
-                if source.debsrc:
-                    lines.append("deb-src %s %s %s" %
-                                 (source.url,
-                                  source.version,
-                                  " ".join(source.components)))
-            lines.append("")
+                rawurl = source.rawurl
+                if not rawurl.endswith('/'):
+                    rawurl += '/'
+                index = rawurl.rfind('/', 0, -1)
 
-        return "\n".join(lines)
+                stanza = deb822.Deb822({
+                    'Types': 'deb',
+                    'URIs': rawurl[:index],
+                    'Suites': rawurl[index + 1:]
+                })
+            else:
+                types = ['deb']
+                if source.debsrc:
+                    types.append('deb-src')
+
+                stanza = deb822.Deb822({
+                    'Types': ' '.join(types),
+                    'URIs': source.url,
+                    'Suites': source.version,
+                    'Components': ' '.join(source.components)
+                })
+
+            key = source.client_options.get('key')
+            if key:
+                stanza['Signed-By'] = ('/etc/apt/trusted.gpg.d/%s.gpg' % key)
+
+            stanza.dump(config, text_mode=True)
+            config.write('\n')
+
+        return config.getvalue()
 
 
 class AptSource(Source):
