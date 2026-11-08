@@ -1,3 +1,10 @@
+bcfg2 (1.4.0pre2+spline13) trixie; urgency=medium
+
+  * Generate current Deb822 apt sources
+  * Fix deprecation warnings
+
+ -- Jonah Brüchert <jbb@kaidan.im>  Sun, 08 Nov 2026 14:58:06 +0100
+
 bcfg2 (1.4.0pre2+spline12) trixie; urgency=medium
 
   * Fix detailed reporting view
