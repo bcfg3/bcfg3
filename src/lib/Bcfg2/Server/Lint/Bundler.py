@@ -31,7 +31,7 @@ class Bundler(ServerPlugin):
             groupdata = self.metadata.groups_xml.xdata
 
             ref_bundles = set([b.get("name")
-                               for b in groupdata.findall("//Bundle")])
+                               for b in groupdata.findall(".//Bundle")])
             for bundle in list(self.core.plugins['Bundler'].bundles.values()):
                 ref_bundles |= set([rb.get("name") for rb in
                                     bundle.xdata.findall(".//RequiredBundle")])

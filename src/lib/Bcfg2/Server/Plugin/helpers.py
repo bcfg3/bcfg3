@@ -596,7 +596,7 @@ class XMLFileBacked(FileBacked):
                 xdata = self.xdata.getroottree()
             else:
                 xdata = lxml.etree.parse(fname)
-        for el in xdata.findall('//' + xinclude):
+        for el in xdata.findall('.//' + xinclude):
             name = el.get("href")
             if name.startswith("/"):
                 fpath = name
