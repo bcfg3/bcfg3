@@ -89,7 +89,7 @@ class Packages(Bcfg2.Server.Plugin.Plugin,
             cf=("packages", "apt_config"),
             help="The default path for generated apt configs",
             default="/etc/apt/sources.list.d/"
-            "bcfg2-packages-generated-sources.list"),
+            "bcfg2-packages-generated-sources.sources"),
         Bcfg2.Options.Option(
             cf=("packages", "readers"), dest="packages_readers",
             help="Packages readers to load",
