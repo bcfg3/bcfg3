@@ -143,7 +143,7 @@ class Validate(Bcfg2.Server.Lint.ServerlessPlugin):
         """ a lightweight version of
         :func:`Bcfg2.Server.Plugin.helpers.XMLFileBacked._follow_xincludes` """
         xinclude = '%sinclude' % Bcfg2.Server.XI_NAMESPACE
-        for el in xdata.findall('//' + xinclude):
+        for el in xdata.findall('.//' + xinclude):
             name = el.get("href")
             if name.startswith("/"):
                 fpath = name

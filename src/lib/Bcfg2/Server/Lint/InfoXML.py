@@ -50,7 +50,7 @@ class InfoXML(Bcfg2.Server.Lint.ServerPlugin):
 
     def check_infoxml(self, fname, xdata):
         """ Verify that info.xml contains everything it should. """
-        for info in xdata.getroottree().findall("//Info"):
+        for info in xdata.getroottree().findall(".//Info"):
             required = []
             required = Bcfg2.Options.setup.required_attrs
 
