@@ -45,7 +45,7 @@ try:
             continue
         option, pattern = line.split()
         if pattern.startswith('*.'):
-            pattern = pattern.replace('*.', '\.')
+            pattern = pattern.replace('*.', r'\.')
             pattern += '$'
         elif pattern.startswith('/'):
             pattern = '^' + pattern

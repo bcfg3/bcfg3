@@ -67,17 +67,17 @@ def paginatedUrls(pattern, view, kwargs=None, name=None):
     """
     results = [(pattern, view, kwargs, name)]
     tail = ''
-    mtail = re.search('(/+\+?\\*?\??\$?)$', pattern)
+    mtail = re.search(r'(/+\+?\\*?\??\$?)$', pattern)
     if mtail:
         tail = mtail.group(1)
     pattern = pattern[:len(pattern) - len(tail)]
-    results += [(pattern + "/(?P<page_number>\d+)" + tail, view, kwargs)]
-    results += [(pattern + "/(?P<page_number>\d+)\|(?P<page_limit>\d+)" +
+    results += [(pattern + r"/(?P<page_number>\d+)" + tail, view, kwargs)]
+    results += [(pattern + r"/(?P<page_number>\d+)\|(?P<page_limit>\d+)" +
                  tail, view, kwargs)]
     if not kwargs:
         kwargs = dict()
     kwargs['page_limit'] = 0
-    results += [(pattern + "/?\|(?P<page_limit>all)" + tail, view, kwargs)]
+    results += [(pattern + r"/?\|(?P<page_limit>all)" + tail, view, kwargs)]
     return results
 
 
@@ -91,11 +91,11 @@ def filteredUrls(pattern, view, kwargs=None, name=None):
     """
     results = [(pattern, view, kwargs, name)]
     tail = ''
-    mtail = re.search('(/+\+?\\*?\??\$?)$', pattern)
+    mtail = re.search(r'(/+\+?\\*?\??\$?)$', pattern)
     if mtail:
         tail = mtail.group(1)
     pattern = pattern[:len(pattern) - len(tail)]
-    for filter in ('/state/(?P<state>\w+)',
+    for filter in (r'/state/(?P<state>\w+)',
                    '/group/(?P<group>[^/]+)',
                    '/group/(?P<group>[^/]+)/(?P<state>[A-Za-z]+)',
                    '/server/(?P<server>[^/]+)',
@@ -116,12 +116,12 @@ def timeviewUrls(pattern, view, kwargs=None, name=None):
     """
     results = [(pattern, view, kwargs, name)]
     tail = ''
-    mtail = re.search('(/+\+?\\*?\??\$?)$', pattern)
+    mtail = re.search(r'(/+\+?\\*?\??\$?)$', pattern)
     if mtail:
         tail = mtail.group(1)
     pattern = pattern[:len(pattern) - len(tail)]
-    for filter in ('/(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})/' + \
-                       '(?P<hour>\d\d)-(?P<minute>\d\d)',
-                   '/(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})'):
+    for filter in (r'/(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})/' +
+                   r'(?P<hour>\d\d)-(?P<minute>\d\d)',
+                   r'/(?P<year>\d{4})-(?P<month>\d{2})-(?P<day>\d{2})'):
         results += [(pattern + filter + tail, view, kwargs)]
     return results
