@@ -1,3 +1,9 @@
+bcfg2 (1.4.0pre2+spline14) trixie; urgency=medium
+
+  * Find apt keys in /usr/share/keyrings/
+
+ -- Jonah Brüchert <jbb@kaidan.im>  Tue, 10 Nov 2026 17:28:44 +0100
+
 bcfg2 (1.4.0pre2+spline13) trixie; urgency=medium
 
   * Generate current Deb822 apt sources
