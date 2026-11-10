@@ -73,7 +73,7 @@ class AptCollection(Collection):
 
             key = source.client_options.get('key')
             if key:
-                stanza['Signed-By'] = ('/etc/apt/trusted.gpg.d/%s.gpg' % key)
+                stanza['Signed-By'] = ('/usr/share/keyrings/%s.gpg' % key)
 
             stanza.dump(config, text_mode=True)
             config.write('\n')
